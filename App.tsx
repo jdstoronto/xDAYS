@@ -27,7 +27,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import XHeader from './Top/xHeader';
-import XForm from './Form_Parts/Form';
+import XForm from './Form_Components/Form';
 
 type SectionProps = PropsWithChildren<{
   title: string;

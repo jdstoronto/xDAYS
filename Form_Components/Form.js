@@ -19,6 +19,7 @@ import {
   Life_Mathematics,
   Explore_Equation
 } from './Form_Index';
+import ChecksThanks from './Checks_Thanks';
 
 function XForm(props) {
   const [day, setDay] = useState('');
@@ -39,8 +40,8 @@ function XForm(props) {
       {/* Corrected prop names */}
       <Describe title='Day' description={day} setDescription={setDay} />
       <Describe title='Health' description={heal} setDescription={setHeal} />
-      <Checks title='Appreciations' value={appreciations} setValue={setAppreciations} />
-      <Checks title='Tasks' value={tasks} setValue={setTasks} />
+      <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
+      <ChecksThanks title='Tasks' value={tasks} setValue={setTasks} />
       <Life_Mathematics value={life_math} setValue={setLife_math} />
       <Explore_Equation value={explore} setValue={setExplore} />
       <Button title="Submit" onPress={handleSubmit} />

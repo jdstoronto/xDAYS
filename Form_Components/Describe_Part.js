@@ -5,7 +5,13 @@ import React from 'react';
 const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
+    color: '#fff'
   },
+  input:{
+    
+    borderWidth: 2,
+    borderColor: '#fff',
+  }
 });
 
 function Describe(props)  {

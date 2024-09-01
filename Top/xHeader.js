@@ -11,16 +11,6 @@ import {
     Dimensions
   } from 'react-native';
 
-  const getCurrentDate = () => {
-    const today = new Date();
-  
-    const year = today.getFullYear().toString().slice(-2); // Get the last two digits of the year
-    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
-    const day = today.getDate().toString().padStart(2, '0'); // Add leading zero if needed
-  
-    return `${year}-${month}-${day}`;
-  };
-
   const XHeader = (props) =>{ 
     return(
         <View style={styles.container}>
@@ -39,16 +29,14 @@ import {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
+      flexDirection: 'row', // Arrange items in a row
       alignItems: 'center',
+      backgroundColor: '#000'
     },
     imageContainer: {
-      position: 'absolute', // Allows overlapping with other views
-      top: 0,
-      left: 0,
-      width: 50, // Set your image width
-      height: 50, // Set your image height
+      width: 50,
+      height: 50,
+      marginRight: 10, // Space between image and text
     },
     image: {
       width: '100%',
@@ -56,17 +44,16 @@ import {
       resizeMode: 'cover',
     },
     textContainer: {
-      position: 'absolute', // Allows overlapping with other views
+      flex: 1, // Take up the remaining space
       justifyContent: 'center',
       alignItems: 'center',
-      width: Dimensions.get('window').width, // Full width of the screen
-      height: Dimensions.get('window').height, // Full height of the screen
     },
     centeredText: {
       fontSize: 18,
-      color: '#fff', // Set text color for visibility over the image
+      color: '#fff', // Set text color to black or another visible color
       textAlign: 'center',
     },
   });
+  
   
   export default XHeader;

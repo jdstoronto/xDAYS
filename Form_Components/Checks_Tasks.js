@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function ChecksThanks(props) {
+function ChecksTasks(props) {
 
   const [isSelected, setIsSelected] = useState(false);
   const [showPrevious, setShowPrevious] = useState(false);
@@ -84,8 +84,26 @@ function ChecksThanks(props) {
           />
     </View>
     )))}
+  <SubTitle title='Future' onClick = {handlePreviousChange}/>
+  {showPrevious && (Array.from({ length: props.count }).map((_, index) => (
+    <View style ={styles.checkrow}>
+      <CheckBox
+            isChecked={isSelected}
+            onChange={handleCheckboxChange}
+      />
+      <TextInput
+          style={styles.inputname} // Use the setter function passed as a prop
+          placeholder = {`Name`}
+          />
+      <TextInput
+          style={styles.inputFor}
+          value={"props.description"}// Use the setter function passed as a prop
+          placeholder = {`For`}
+          />
+    </View>
+    )))}
   </View>
   )
 };
 
-export default ChecksThanks;
+export default ChecksTasks;

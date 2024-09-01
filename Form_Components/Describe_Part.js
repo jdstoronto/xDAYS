@@ -1,6 +1,7 @@
 
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
@@ -18,7 +19,7 @@ function Describe(props)  {
 
     return(
       <View>
-        <Text style={styles.highlight}>{props.title}</Text>
+        <Title title = {props.title} />
         <TextInput
         style={styles.input}
         value={props.description}

@@ -18,6 +18,8 @@ function Life_Mathematics(props){
       <View style = {styles.Container}>
         <MathButton title = '+'/>
         <MathButton title = '-'/>
+      </View>
+      <View style = {styles.Container}>
         <MathButton title = '*'/>
         <MathButton title = '÷'/>
       </View>

@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         width: "50%",
+        margin: 3,
     },
     Tab: {
         position: 'relative',

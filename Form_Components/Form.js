@@ -18,7 +18,7 @@ import {
   ChecksThanks,
   ChecksTasks,
   Life_Mathematics,
-  Explore_Equation
+  ExploreEquation
 } from './Form_Index';
 
 function XForm(props) {
@@ -43,7 +43,7 @@ function XForm(props) {
       <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
       <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} />
       <Life_Mathematics title='Life' value={life_math} setValue={setLife_math} />
-      <Explore_Equation value={explore} setValue={setExplore} />
+      <ExploreEquation title='Explore' value={explore} setValue={setExplore} />
       <Button title="Submit" onPress={handleSubmit} />
     </View>
   );

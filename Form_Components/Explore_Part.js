@@ -1,19 +1,40 @@
-
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
+    color: '#fff'
   },
+  input:{
+    
+    borderWidth: 2,
+    borderColor: '#fff',
+  }
 });
 
-function Explore_Equation (){
-    <Text>
-      Press <Text style={styles.highlight}>Cmd or Ctrl + M</Text> or{' '}
-      <Text style={styles.highlight}>Shake</Text> your device to open the Dev
-      Menu.
-    </Text>
-  };
+function ExploreEquation(props)  {
 
-export default Explore_Equation;
+    return(
+      <View>
+        <Title title = {props.title} />
+        <SubTitle title={'Why?'} />
+        <TextInput
+        style={styles.input}
+        value={props.description}
+        onChangeText={props.setDescription} // Use the setter function passed as a prop
+        placeholder = {`How was your ${props.title}`}
+        />
+        <SubTitle title={'Why Not?'} />
+        <TextInput
+        style={styles.input}
+        value={props.description}
+        onChangeText={props.setDescription} // Use the setter function passed as a prop
+        placeholder = {`How was your ${props.title}`}
+        />
+      </View>
+    )
+};
+
+export default ExploreEquation;

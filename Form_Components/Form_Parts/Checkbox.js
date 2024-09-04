@@ -32,7 +32,7 @@ const CheckBox = ({isChecked, onChange }) => {
     return (
       <TouchableOpacity style={styles.checkboxContainer} onPress={onChange}>
         <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]}>
-          {isChecked && <Text style={styles.checkmark}>x</Text>}
+          {isChecked && <Text style={styles.checkmark}>■</Text>}
         </View>
       </TouchableOpacity>
     );

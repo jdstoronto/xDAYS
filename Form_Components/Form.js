@@ -36,17 +36,24 @@ function XForm(props) {
   };
 
   return (
-    <View>
+    <View style ={styles.container}>
       {/* Corrected prop names */}
-      <Describe title='Day' description={day} setDescription={setDay} />
-      <Describe title='Health' description={heal} setDescription={setHeal} />
+      <Describe title='Day' description={day} setDescription={setDay} height={130}/>
+      <Describe title='Health' description={heal} setDescription={setHeal} height={90}/>
       <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
       <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} />
       <Life_Mathematics title='Life' value={life_math} setValue={setLife_math} />
-      <ExploreEquation title='Explore' value={explore} setValue={setExplore} />
+      <ExploreEquation title='Explore' value={explore} setValue={setExplore} height={90} />
       <Button title="Submit" onPress={handleSubmit} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginLeft: 10,
+    marginRight: 10,
+  },
+});
 
 export default XForm;

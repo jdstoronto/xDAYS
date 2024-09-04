@@ -1,6 +1,6 @@
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
-import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
+import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
@@ -20,18 +20,20 @@ function ExploreEquation(props)  {
       <View>
         <Title title = {props.title} />
         <SubTitle title={'Why?'} />
-        <TextInput
+        <XTextInput
+        height = {props.height}
         style={styles.input}
         value={props.description}
         onChangeText={props.setDescription} // Use the setter function passed as a prop
-        placeholder = {`How was your ${props.title}`}
+        placeholder = {`Explore Why?`}
         />
         <SubTitle title={'Why Not?'} />
-        <TextInput
+        <XTextInput
+        height = {props.height}
         style={styles.input}
         value={props.description}
         onChangeText={props.setDescription} // Use the setter function passed as a prop
-        placeholder = {`How was your ${props.title}`}
+        placeholder = {`Explore Why Not?`}
         />
       </View>
     )

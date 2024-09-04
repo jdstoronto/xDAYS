@@ -4,9 +4,12 @@ import React from 'react';
 
 const styles = StyleSheet.create({
     Title: {
-        fontWeight: '700',
+        fontWeight: 'bold',
         color: '#fff',
         flexDirection: 'row',
+        marginTop: 2,
+        marginBottom: 2,
+        fontFamily: 'Perfect DOS VGA 437',
     }
   });
 

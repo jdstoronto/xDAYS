@@ -26,7 +26,12 @@ function XForm(props) {
   const [heal, setHeal] = useState('');
   const [appreciations, setAppreciations] = useState('');
   const [tasks, setTasks] = useState([]);
-  const [life_math, setLife_math] = useState([]);
+  const [life_math, setLife_math] = useState({
+    '+':'',
+    '-':'',
+    '*':'',
+    '÷':''
+  });
   const [selected_math, setSelected_math] = useState('');
   const [explore, setExplore] = useState([]);
   const [submit, setSubmit] = useState(false);
@@ -46,8 +51,8 @@ function XForm(props) {
       <Describe title='Health' description={heal} setDescription={setHeal} height={90}/>
       <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
       <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} />
-      <Life_Mathematics title='Life' value={life_math} setValue={setLife_math} setSelected={setSelected_math} />
-      <ExploreEquation title='Explore' value={explore} setValue={setExplore} selected={selected_math} height={90} />
+      <Life_Mathematics title='Life' life_math={life_math} setValue={setLife_math} setSelected={setSelected_math} selected={selected_math}/>
+      <ExploreEquation title='Explore' value={explore} setValue={setExplore} selected={selected_math} height={90} life_math={life_math}/>
       {/* Probably should have made button touchable opacity */}
       <View style = {styles.buttonContainer}>
         <View style = {{width:'50%',borderColor: 'white',borderWidth: 2,}}>

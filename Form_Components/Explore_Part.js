@@ -19,22 +19,26 @@ function ExploreEquation(props)  {
     return(
       <View>
         <Title title = {props.title} />
-        <SubTitle title={'Why?'} />
+        {(props.selected != '' && props.life_math[props.selected] ) && (
+          <View>
+        <SubTitle title={`Why ${props.selected} ${props.life_math[props.selected]}?`} />
         <XTextInput
         height = {props.height}
         style={styles.input}
         value={props.description}
         onChangeText={props.setDescription} // Use the setter function passed as a prop
-        placeholder = {`Explore Why?`}
+        placeholder = {`Explore`}
         />
-        <SubTitle title={'Why Not?'} />
+        <SubTitle title={`Why Not ${props.selected} ${props.life_math[props.selected]}?`} />
         <XTextInput
         height = {props.height}
         style={styles.input}
         value={props.description}
         onChangeText={props.setDescription} // Use the setter function passed as a prop
-        placeholder = {`Explore Why Not?`}
+        placeholder = {`Explore`}
         />
+        </View>
+      )}
       </View>
     )
 };

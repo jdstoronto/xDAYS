@@ -8,19 +8,26 @@ const styles = StyleSheet.create({
         width: "50%",
         margin: 3,
     },
-    Tab: {
+    Button: {
         position: 'relative',
         width: 40,
         height: 40,
         justifyContent: 'center', // Center content horizontally
         alignItems: 'center', // Center content vertically
-        marginRight: 10, // Add some spacing between Tab and Title
+        margin:5,
+        color: 'white',
+    },
+    ButtonSelected: {
+      backgroundColor:'white',
     },
     Title: {
         fontSize: 30,
         fontWeight: '900',
-        color: '#fff'
+        color:'white',
     },
+    TitleSelected: {
+      color:'black'
+  },
     inputname:{
       position: 'relative',
       flexDirection: 'row',
@@ -32,18 +39,38 @@ const styles = StyleSheet.create({
     },
   });
 
-const MathButton = ({title, onClick}) => {
-    return (
-      <View style = {styles.Container}>
-        <TouchableOpacity style={styles.Tab} onPress={onClick}>
-            <Text style ={styles.Title}>{title}</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.inputname} // Use the setter function passed as a prop
-          placeholder = {`Word`}
-          />
-      </View>
-    );
+
+const MathButton = ({title, setSelected, selected,setValue, life_math}) => {
+
+  const update = (newValue) => {
+    setValue((prevState) => ({
+      ...prevState,  // Spread the previous state to retain existing data
+      [title]: newValue
+    }));
   };
+
+  const pressed = () =>{
+    if (title == selected){
+      setSelected('')
+    }else{
+      setSelected(title)
+    }
+    
+  }
+
+  return (
+    <View style = {styles.Container}>
+      <TouchableOpacity style={[styles.Button, title == selected && styles.ButtonSelected]} onPress={pressed}>
+          <Text style ={[styles.Title, title == selected && styles.TitleSelected]}>{title}</Text>
+      </TouchableOpacity>
+      <TextInput
+        style={styles.inputname} // Use the setter function passed as a prop
+        placeholder = {'word'}
+        value={life_math[title]}
+        onChangeText={update}
+        />
+    </View>
+  );
+};
 
 export default MathButton;

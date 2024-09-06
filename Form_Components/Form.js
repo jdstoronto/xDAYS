@@ -21,11 +21,43 @@ import {
   ExploreEquation
 } from './Form_Index';
 
+const importedPreviousTasks = [
+  {
+    status:'',
+    task:'Work on Resume'
+  },
+  {
+    status:'',
+    task:'Reach out to Cathy Friend'
+  },
+  {
+    status:'Completed',
+    task:'Ask Heather for Reference Letter'
+  }
+]
+
+const importedFutureTasks = [
+  {
+    status:'Future',
+    task:'Buy Helena Flowers'
+  },
+  {
+    status:'Future',
+    task:'Life Insurance'
+  },
+  {
+    status:'Future',
+    task:'Call Doctors Office'
+  }
+]
+
 function XForm(props) {
   const [day, setDay] = useState('');
   const [heal, setHeal] = useState('');
-  const [appreciations, setAppreciations] = useState('');
+  const [appreciations, setAppreciations] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
+  const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
   const [life_math, setLife_math] = useState({
     '+':'',
     '-':'',
@@ -50,7 +82,10 @@ function XForm(props) {
       <Describe title='Day' description={day} setDescription={setDay} height={130}/>
       <Describe title='Health' description={heal} setDescription={setHeal} height={90}/>
       <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
-      <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} />
+      <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} 
+        previousTasks = {previousTasks} updatePrevious = {setPreviousTasks}
+        futureTasks = {futureTasks} updateFuture = {setFutureTasks}
+      />
       <Life_Mathematics title='Life' life_math={life_math} setValue={setLife_math} setSelected={setSelected_math} selected={selected_math}/>
       <ExploreEquation title='Explore' value={explore} setValue={setExplore} selected={selected_math} height={90} life_math={life_math}/>
       {/* Probably should have made button touchable opacity */}

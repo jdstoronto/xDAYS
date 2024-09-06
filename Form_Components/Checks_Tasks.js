@@ -25,82 +25,164 @@ const styles = StyleSheet.create({
     height: 40,
     width: '50%',
     margin: 2,
+    flex: 1,
   },
+  
+  inputed:{
+    position: 'relative',
+    flexDirection: 'row',
+    height: 25,
+    width: '50%',
+    margin: 2,
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    textAlignVertical: 'center',
+  },
+
   checkrow:{
     flex: 1,
     flexDirection: 'row',
   },
 });
 
+function checkboxChange(previous, index){
+  const updatedItems = previous;
+      // Update the specific item at the given index
+      if (updatedItems[index].status == '' && updatedItems[index].status != 'Future'){
+        updatedItems[index].status = 'Completed';}
+      else if(updatedItems[index].status != 'Future'){
+        updatedItems[index].status = '';
+      }
+      return updatedItems;
+}
+
+function futureCheckChange(previous, index){
+  const updatedItems = previous;
+  // Update the specific item at the given index
+  if (updatedItems[index].status == 'Future'){
+    updatedItems[index].status = '';}
+  else{
+    updatedItems[index].status = 'Future';
+  }
+  return updatedItems;  // Return the updated array
+}
+
 function ChecksTasks(props) {
 
   const [isSelected, setIsSelected] = useState(false);
   const [showPrevious, setShowPrevious] = useState(false);
 
-  const handleCheckboxChange = () => {
-    setIsSelected(!isSelected);
+  const handleCheckboxChange = (index) => {
+    props.setValue((prevItems) => {
+      return checkboxChange([...prevItems], index);  // Return the updated array
+    });
   };
 
-  const handlePreviousChange = () => {
+  const handlePreviousCheckboxChange = (index) => {
+    props.updatePrevious((prevItems) => {
+      return checkboxChange([...prevItems], index);  // Return the updated array
+    });
+  };
+
+  const handleFutureCheckboxChange = (index) => {
+    props.updateFuture((prevItems) => {
+      return checkboxChange([...prevItems], index);  // Return the updated array
+    });
+  };
+
+  const handleFuture = (index) =>{ 
+    props.setValue((prevItems) => {
+      return futureCheckChange([...prevItems], index);  // Return the updated array
+    });
+
+  }
+
+  const handlePreviousFuture = (index) =>{ 
+    props.updatePrevious((prevItems) => {
+      return futureCheckChange([...prevItems], index);  // Return the updated array
+    });
+
+  }
+
+  const changeFuture = (index) =>{ 
+    props.updateFuture((prevItems) => {
+      return futureCheckChange([...prevItems], index);  // Return the updated array
+    });
+
+  }
+
+  const handleShowPrevious = (index) => {
     setShowPrevious(!showPrevious);
   };
 
+  const handleTask = (newValue, index) =>{
+    props.setValue((prevItems) => {
+      // Create a copy of the array
+      const updatedItems = [...prevItems];
+      // Update the specific item at the given index
+      updatedItems[index].task = newValue;
+      return updatedItems;  // Return the updated array
+    });
+  }
+
+  const emptyTasks = () =>{
+    const tasks = []
+    for (let i = 0; i < props.count; i++) {
+      const element = {
+        status:'',
+        task:''
+      };
+      tasks.push(element)
+    }
+    return tasks
+  }
+
+  if (props.value.length !== props.count) {
+    props.setValue(emptyTasks());  // This will be a future issue if i want to add tasks
+  }
 
   return(
   <View>
   <Title title = {props.title} />
-  {Array.from({ length: props.count }).map((_, index) => (
+  {Array.from(props.value).map((value, index) => (
     <View style ={styles.checkrow}>
       <CheckBox
-            isChecked={isSelected}
-            onChange={handleCheckboxChange}
+            status={value.status}
+            onChange={() =>handleCheckboxChange(index)}
+            onHold={() => handleFuture(index)}
       />
       <TextInput
-          style={styles.inputname} // Use the setter function passed as a prop
-          placeholder = {`Name`}
-          />
-      <TextInput
           style={styles.inputFor}
-          value={"props.description"}// Use the setter function passed as a prop
-          placeholder = {`For`}
+          value={value.task}// Use the setter function passed as a prop
+          onChangeText={text => handleTask(text, index)}
+          placeholder = {`Task`}
           />
     </View>
     ))}
-  <SubTitle title='Previous' onClick = {handlePreviousChange}/>
-  {showPrevious && (Array.from({ length: props.count }).map((_, index) => (
+  <SubTitle title='Previous' onClick = {handleShowPrevious}/>
+  
+  {showPrevious && (Array.from(props.previousTasks).map((value, index) => (
     <View style ={styles.checkrow}>
-      <CheckBox
-            isChecked={isSelected}
-            onChange={handleCheckboxChange}
-      />
-      <TextInput
-          style={styles.inputname} // Use the setter function passed as a prop
-          placeholder = {`Name`}
-          />
-      <TextInput
-          style={styles.inputFor}
-          value={"props.description"}// Use the setter function passed as a prop
-          placeholder = {`For`}
-          />
-    </View>
+    <CheckBox
+          status={value.status}
+          onChange={() =>handlePreviousCheckboxChange(index)}
+          onHold={() => handlePreviousFuture(index)}
+    />
+    <Text style={styles.inputed}>{value.task}</Text>
+  </View>
     )))}
-  <SubTitle title='Future' onClick = {handlePreviousChange}/>
-  {showPrevious && (Array.from({ length: props.count }).map((_, index) => (
+  <SubTitle title='Future' onClick = {handleShowPrevious}/>
+
+  {showPrevious && (Array.from(props.futureTasks).map((value, index) => (
     <View style ={styles.checkrow}>
-      <CheckBox
-            isChecked={isSelected}
-            onChange={handleCheckboxChange}
-      />
-      <TextInput
-          style={styles.inputname} // Use the setter function passed as a prop
-          placeholder = {`Name`}
-          />
-      <TextInput
-          style={styles.inputFor}
-          value={"props.description"}// Use the setter function passed as a prop
-          placeholder = {`For`}
-          />
-    </View>
+    <CheckBox
+          status={value.status}
+          onChange={() =>handleFutureCheckboxChange(index)}
+          onHold={() => changeFuture(index)}
+    />
+    <Text style={styles.inputed}>{value.task}</Text>
+  </View>
     )))}
   </View>
   )

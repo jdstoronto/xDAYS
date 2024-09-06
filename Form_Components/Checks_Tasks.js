@@ -54,6 +54,7 @@ function checkboxChange(previous, index){
       else if(updatedItems[index].status != 'Future'){
         updatedItems[index].status = '';
       }
+      updatedItems[index].id = Date.now();
       return updatedItems;
 }
 
@@ -65,6 +66,7 @@ function futureCheckChange(previous, index){
   else{
     updatedItems[index].status = 'Future';
   }
+  updatedItems[index].id = Date.now();
   return updatedItems;  // Return the updated array
 }
 
@@ -122,6 +124,7 @@ function ChecksTasks(props) {
       const updatedItems = [...prevItems];
       // Update the specific item at the given index
       updatedItems[index].task = newValue;
+      updatedItems[index].id = Date.now();
       return updatedItems;  // Return the updated array
     });
   }
@@ -131,7 +134,8 @@ function ChecksTasks(props) {
     for (let i = 0; i < props.count; i++) {
       const element = {
         status:'',
-        task:''
+        task:'',
+        id: Date.now(),
       };
       tasks.push(element)
     }

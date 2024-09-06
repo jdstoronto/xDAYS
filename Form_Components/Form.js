@@ -21,16 +21,40 @@ import {
   ExploreEquation
 } from './Form_Index';
 
+const importedPreviousAppreciations = [
+  {
+    id: Date.parse('01 Dec 1995 00:12:00 GMT'),
+    status:'',
+    name:'Helena',
+    task:'For taking Cleo out on Outings'
+  },
+  {
+    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
+    status:'',
+    name:'Alex Godinho',
+    task:'For letting me know about the Saturday Basketball Runs'
+  },
+  {
+    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
+    status:'Completed',
+    name:'Lee Smith',
+    task:'For Job Opportunity'
+  }
+]
+
 const importedPreviousTasks = [
   {
+    id: Date.parse('12 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Work on Resume'
   },
   {
+    id: Date.parse('10 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Reach out to Cathy Friend'
   },
   {
+    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
     status:'Completed',
     task:'Ask Heather for Reference Letter'
   }
@@ -38,14 +62,17 @@ const importedPreviousTasks = [
 
 const importedFutureTasks = [
   {
+    id: Date.parse('04 Dec 1995 00:01:00 GMT'),
     status:'Future',
     task:'Buy Helena Flowers'
   },
   {
+    id: Date.parse('24 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Life Insurance'
   },
   {
+    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Call Doctors Office'
   }

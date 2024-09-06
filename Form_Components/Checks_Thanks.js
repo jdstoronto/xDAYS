@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   inputed:{
     position: 'relative',
     flexDirection: 'row',
-    height: 25,
+    minHeight: 25,
     width: '50%',
     margin: 2,
     flex: 1,
@@ -103,7 +103,7 @@ function ChecksThanks(props) {
 
   const handlePropertyChange = (index, name, value) => {
     props.setValue((prevItems) => {
-      return checkboxChange([...prevItems], index, name, value);  // Return the updated array
+      return propertyChange([...prevItems], index, name, value);  // Return the updated array
     });
   };
 
@@ -135,20 +135,20 @@ function ChecksThanks(props) {
   {Array.from(props.value).map((value, index) => (
     <View style ={styles.checkrow}>
       <CheckBox
-            isChecked={value.status}
+            status={value.status}
             onChange={() => handleCheckboxChange(index)}
       />
       <TextInput
           style={styles.inputname} // Use the setter function passed as a prop
-          placeholder = {`Name`}
           value={value.name}
           onChangeText={text => handlePropertyChange(index,'name',text)}
+          placeholder = {`Name`}
           />
       <TextInput
           style={styles.inputFor}
-          placeholder = {`Thank You..`}
           value={value.thanks}
           onChangeText={text => handlePropertyChange(index,'thanks',text)}
+          placeholder = {`Thank You..`}
           />
     </View>
     ))}
@@ -156,10 +156,10 @@ function ChecksThanks(props) {
   {showPrevious && (Array.from(props.previousThanks).map((value, index) => (
     <View style ={styles.checkrow}>
       <CheckBox
-            isChecked={value.status}
+            status={value.status}
             onChange={() => handlePreviousCheckboxChange(index)}
       />
-      <Text style={styles.inputedname}> // Use the setter function passed as a prop
+      <Text style={styles.inputedname}>
         {value.name}
       </Text>
       <Text style={styles.inputed}>

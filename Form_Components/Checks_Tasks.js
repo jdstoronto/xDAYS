@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   inputed:{
     position: 'relative',
     flexDirection: 'row',
-    height: 25,
+    minHeight: 25,
     width: '50%',
     margin: 2,
     flex: 1,

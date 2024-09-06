@@ -72,7 +72,6 @@ function futureCheckChange(previous, index){
 
 function ChecksTasks(props) {
 
-  const [isSelected, setIsSelected] = useState(false);
   const [showPrevious, setShowPrevious] = useState(false);
 
   const handleCheckboxChange = (index) => {
@@ -129,7 +128,7 @@ function ChecksTasks(props) {
     });
   }
 
-  const emptyTasks = () =>{
+  const createEmptyTasks = () =>{
     const tasks = []
     for (let i = 0; i < props.count; i++) {
       const element = {
@@ -143,7 +142,7 @@ function ChecksTasks(props) {
   }
 
   if (props.value.length !== props.count) {
-    props.setValue(emptyTasks());  // This will be a future issue if i want to add tasks
+    props.setValue(createEmptyTasks());  // This will be a future issue if i want to add tasks
   }
 
   return(

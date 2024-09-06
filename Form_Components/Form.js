@@ -26,19 +26,19 @@ const importedPreviousAppreciations = [
     id: Date.parse('01 Dec 1995 00:12:00 GMT'),
     status:'',
     name:'Helena',
-    task:'For taking Cleo out on Outings'
+    thanks:'For taking Cleo out on Outings'
   },
   {
     id: Date.parse('04 Dec 1995 00:12:00 GMT'),
     status:'',
     name:'Alex Godinho',
-    task:'For letting me know about the Saturday Basketball Runs'
+    thanks:'For letting me know about the Saturday Basketball Runs'
   },
   {
     id: Date.parse('14 Dec 1995 00:12:00 GMT'),
     status:'Completed',
     name:'Lee Smith',
-    task:'For Job Opportunity'
+    thanks:'For Job Opportunity'
   }
 ]
 
@@ -81,10 +81,14 @@ const importedFutureTasks = [
 function XForm(props) {
   const [day, setDay] = useState('');
   const [heal, setHeal] = useState('');
+
   const [appreciations, setAppreciations] = useState([]);
+  const [previousAppreciations, setPreviousAppreciations] = useState(importedPreviousAppreciations);
+  
   const [tasks, setTasks] = useState([]);
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
   const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
+
   const [life_math, setLife_math] = useState({
     '+':'',
     '-':'',
@@ -108,7 +112,11 @@ function XForm(props) {
       
       <Describe title='Day' description={day} setDescription={setDay} height={130}/>
       <Describe title='Health' description={heal} setDescription={setHeal} height={90}/>
-      <ChecksThanks title='Appreciations' value={appreciations} setValue={setAppreciations} count={3}/>
+      <ChecksThanks 
+        title='Appreciations' count={3}
+        value={appreciations} setValue={setAppreciations}
+        previousThanks = {previousAppreciations} updatePrevious = {setPreviousAppreciations}
+      />
       <ChecksTasks title='Tasks' value={tasks} setValue={setTasks} count={3} 
         previousTasks = {previousTasks} updatePrevious = {setPreviousTasks}
         futureTasks = {futureTasks} updateFuture = {setFutureTasks}

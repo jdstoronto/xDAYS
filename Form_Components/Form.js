@@ -31,6 +31,8 @@ import {
   formatExplore,
   formatDate} from './Format_Form';
 
+  import {saveFile} from './Export_Form'
+
 const importedPreviousAppreciations = [
   {
     id: Date.parse('01 Dec 1995 00:12:00 GMT'),
@@ -123,7 +125,8 @@ function XForm(props) {
     formatMath(life_math,  selected_math)
     formatExplore(explore, selected_math)
     setSubmit(true);
-    Alert.alert('Form Submitted', getFormated());
+    saveFile(`x${props.date}`, getFormated())
+    //Alert.alert('Form Submitted', getFormated());
     
   };
 

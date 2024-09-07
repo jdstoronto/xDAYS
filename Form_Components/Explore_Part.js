@@ -26,15 +26,22 @@ function ExploreEquation(props)  {
         height = {props.height}
         style={styles.input}
         value={props.description}
-        onChangeText={props.setDescription} // Use the setter function passed as a prop
+        setDescription={(text) => props.setValue(prev=>({
+          ...prev,
+          why:text,
+        }))} // Use the setter function passed as a prop
         placeholder = {`Explore`}
         />
         <SubTitle title={`Why Not ${props.selected} ${props.life_math[props.selected]}?`} />
         <XTextInput
         height = {props.height}
         style={styles.input}
-        value={props.description}
-        onChangeText={props.setDescription} // Use the setter function passed as a prop
+        value={props.value}
+        setDescription={text => props.setValue((prev)=>{
+          const newObj = prev;
+          newObj.whynot = text;
+          return newObj;
+        })} // Use the setter function passed as a prop
         placeholder = {`Explore`}
         />
         </View>

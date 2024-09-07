@@ -118,10 +118,10 @@ function XForm(props) {
     formatDate(props.date);
     formatDays(day);
     formatHealth(heal)
-    formatThanks(appreciations)
-    formatTasks(tasks)
-    formatMath(life_math, selected_math)
-    formatExplore(explore,selected_math)
+    formatThanks(appreciations,previousAppreciations)
+    formatTasks(tasks,previousTasks,futureTasks)
+    formatMath(life_math,  selected_math)
+    formatExplore(explore, selected_math)
     setSubmit(true);
     Alert.alert('Form Submitted', getFormated());
     

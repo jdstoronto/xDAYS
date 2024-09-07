@@ -11,6 +11,26 @@ formated_math =
 formated_explore
 = ''
 
+const mathToString = {
+    '+':'Add',
+    '-':'Subtract',
+    '*':'Multiply',
+    '÷':'Divide'
+}
+
+const checkToString = {
+    Completed:`[x]`,
+    '':'[  ]',
+    Future:' ~ ',
+}
+
+title = (text) => {
+    return `**${text}**`
+}
+
+subTitle = (text) => {
+    return `\n\t\t${text}`
+}
 
 function getFormated(){
     formated_form = ''
@@ -21,8 +41,6 @@ function getFormated(){
     formated_form += ('\n' + formated_tasks);
     formated_form += ('\n' + formated_math);
     formated_form += ('\n' + formated_explore);
-    console.log('completed');
-    console.log(formated_form);
     return formated_form;
 };
 
@@ -38,38 +56,48 @@ function formatHealth(text){
     formated_health = '**Health**\n' + " - " + text;
 }
 
-function formatThanks(array){
-    title = '**Appreciations**'
-    thanks = array.map(value => (
-        `\n  ${value.status == 'Completed' ?'[x]':'[ ]'} ${value.name} - ${value.thanks}`
+function formatThanks(newArray, prevArray){
+    newThanks = newArray.map(value => (
+        `\n  ${checkToString[value.status]} ${value.name} - ${value.thanks}`
     )).join('');
-    formated_appreciations = title + thanks;
+    prevThanks = prevArray.map(value => (
+        `\n  ${checkToString[value.status]} ${value.name} - ${value.thanks}`
+    )).join('');
+    formated_appreciations = title(`Appreciations`) + subTitle('New') + newThanks + subTitle('Previous') + prevThanks;
 }
 
-function formatTasks(array){
-    title = '**Appreciations**'
-    tasks = array.map(value => (
-        `\n  ${value.status == 'Completed' ?'[x]':'[ ]'} ${value.thanks}`
+function formatTasks(newArray,prevArray,futureArray){
+    newTasks = newArray.map(value => (
+        `\n  ${checkToString[value.status]} ${value.task}`
     )).join('');
-    formated_tasks = title + tasks;
+    prevTasks = prevArray.map(value => (
+        `\n  ${checkToString[value.status]} ${value.task}`
+    )).join('');
+    futureTasks = futureArray.map(value => (
+        `\n  ${checkToString[value.status]} ${value.task}`
+    )).join('');
+    formated_tasks = (title(`Tasks`) 
+    + subTitle('New') + newTasks
+    + subTitle('Previous') + prevTasks
+    + subTitle('Future') + futureTasks
+    );
 }
 
 function formatMath(obj, text){
-    title = '**Life**';
-    subtract = `\n -Subtract: ${obj['-']}`;
-    add = `\n -Add: ${obj['+']}`;
-    multiply = `\n -Multiply: ${obj['*']}`;
-    divide = `\n -Divide: ${obj['÷']}`;
+    subtract = `\n -${mathToString['-']}: ${obj['-']}`;
+    add = `\n -${mathToString['+']}: ${obj['+']}`;
+    multiply = `\n -${mathToString['*']}: ${obj['*']}`;
+    divide = `\n -${mathToString['÷']}: ${obj['÷']}`;
 
-    formated_math = title + subtract + add + multiply + divide    
+    formated_math = title('Life') + subtract + add + multiply + divide    
 }
 
 function formatExplore(obj, text){
-    title = '**Explore Life**';
-    explore = text != '' && ('Why and Why Not')
-    
+    explore = text != '' && (
+        `${subTitle(`Why`)} ${mathToString[text]}: \n${obj.why} ${subTitle(`Why Not`)} ${mathToString[text]}: \n${obj.whynot}`
+    )
 
-    formated_explore = title;
+    formated_explore = title(`Explore Life`) + explore;
 }
 
 export {formatDays, formatDate, formatHealth, formatTasks, formatThanks, formatMath, formatExplore, getFormated};

@@ -21,7 +21,15 @@ import {
   ExploreEquation
 } from './Form_Index';
 
-import { getFormated, formatDays , formatDate} from './Format_Form';
+import { 
+  getFormated, 
+  formatDays , 
+  formatHealth,
+  formatThanks, 
+  formatTasks,
+  formatMath, 
+  formatExplore,
+  formatDate} from './Format_Form';
 
 const importedPreviousAppreciations = [
   {
@@ -98,14 +106,22 @@ function XForm(props) {
     '÷':''
   });
   const [selected_math, setSelected_math] = useState('');
-  const [explore, setExplore] = useState([]);
+  const [explore, setExplore] = useState({
+    why:'',
+    whynot:''
+  });
   const [submit, setSubmit] = useState(false);
 
   // Function to handle form submission
   const handleSubmit = () => {
     // You can process the data here, such as sending it to a server
-    formatDays(day);
     formatDate(props.date);
+    formatDays(day);
+    formatHealth(heal)
+    formatThanks(appreciations)
+    formatTasks(tasks)
+    formatMath(life_math, selected_math)
+    formatExplore(explore,selected_math)
     setSubmit(true);
     Alert.alert('Form Submitted', getFormated());
     

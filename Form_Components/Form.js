@@ -21,6 +21,8 @@ import {
   ExploreEquation
 } from './Form_Index';
 
+import { getFormated, formatDays , formatDate} from './Format_Form';
+
 const importedPreviousAppreciations = [
   {
     id: Date.parse('01 Dec 1995 00:12:00 GMT'),
@@ -102,8 +104,10 @@ function XForm(props) {
   // Function to handle form submission
   const handleSubmit = () => {
     // You can process the data here, such as sending it to a server
+    formatDays(day);
+    formatDate(props.date);
     setSubmit(true);
-    Alert.alert('Form Submitted', `Date: ${props.date}\nDay: ${day}`);
+    Alert.alert('Form Submitted', getFormated());
     
   };
 

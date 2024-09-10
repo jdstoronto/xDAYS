@@ -21,11 +21,11 @@ import {
   ExploreEquation
 } from './Form_Index';
 
-import { 
-  getFormated, 
-  setFormated} from './Format_Form';
+import { getFormated, setFormated} from './Format_Form';
 
-  import {saveFile} from './Export_Form'
+import {saveFile} from './Export_Form';
+
+import {storeForm} from './Store_Form';
 
 const importedPreviousAppreciations = [
   {
@@ -126,7 +126,7 @@ function XForm(props) {
     }
 
     setFormated(entry);
-    
+    storeForm(entry);
     setSubmit(true);
     saveFile(`x${props.date}`, getFormated())
     //Alert.alert('Form Submitted', getFormated());

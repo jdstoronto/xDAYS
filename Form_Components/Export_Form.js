@@ -1,9 +1,7 @@
 import RNFS from 'react-native-fs';
 import DocumentPicker from 'react-native-document-picker';//Need to Remove
-import SQLite from 'react-native-sqlite-storage';
-import { Alert } from 'react-native';
 
-const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
+import { Alert } from 'react-native';
 
 const saveFile = async(fileName, content)=>{
     try {

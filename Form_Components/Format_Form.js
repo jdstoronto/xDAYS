@@ -1,7 +1,3 @@
-import { ToastAndroid } from "react-native";
-
-
-
 formated_title =
 formated_day =
 formated_health =

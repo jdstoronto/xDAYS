@@ -20,7 +20,7 @@ const mathToString = {
 
 const checkToString = {
     Completed:`[x]`,
-    '':'[  ]',
+    '':'[ ]',
     Future:' ~ ',
 }
 
@@ -100,4 +100,14 @@ function formatExplore(obj, text){
     formated_explore = title(`Explore Life`) + explore;
 }
 
-export {formatDays, formatDate, formatHealth, formatTasks, formatThanks, formatMath, formatExplore, getFormated};
+function setFormated(entry){
+    formatDate(entry.date);
+    formatDays(entry.day);
+    formatHealth(entry.heal)
+    formatThanks(entry.appreciations,entry.previousAppreciations)
+    formatTasks(entry.tasks,entry.previousTasks,entry.futureTasks)
+    formatMath(entry.lifeMath,  entry.selectedMath)
+    formatExplore(entry.explore, entry.selected_math)
+}
+
+export {setFormated, getFormated};

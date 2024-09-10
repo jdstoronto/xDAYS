@@ -23,13 +23,7 @@ import {
 
 import { 
   getFormated, 
-  formatDays , 
-  formatHealth,
-  formatThanks, 
-  formatTasks,
-  formatMath, 
-  formatExplore,
-  formatDate} from './Format_Form';
+  setFormated} from './Format_Form';
 
   import {saveFile} from './Export_Form'
 
@@ -117,13 +111,22 @@ function XForm(props) {
   // Function to handle form submission
   const handleSubmit = () => {
     // You can process the data here, such as sending it to a server
-    formatDate(props.date);
-    formatDays(day);
-    formatHealth(heal)
-    formatThanks(appreciations,previousAppreciations)
-    formatTasks(tasks,previousTasks,futureTasks)
-    formatMath(life_math,  selected_math)
-    formatExplore(explore, selected_math)
+    const entry = {
+      date: props.date,
+      day: day,
+      heal: heal,
+      appreciations: appreciations,
+      previousAppreciations: previousAppreciations,
+      tasks: tasks,
+      previousTasks: previousTasks,
+      futureTasks: futureTasks,
+      lifeMath: life_math,
+      selectedMath: selected_math,
+      explore: explore
+    }
+
+    setFormated(entry);
+    
     setSubmit(true);
     saveFile(`x${props.date}`, getFormated())
     //Alert.alert('Form Submitted', getFormated());

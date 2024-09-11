@@ -27,30 +27,6 @@ import {saveFile} from './Export_Form';
 
 import {storeForm, getThanks} from './Store_Form';
 
-/*
-const importedPreviousAppreciations = [
-  {
-    id: Date.parse('01 Dec 1995 00:12:00 GMT'),
-    status:'',
-    name:'Helena',
-    thanks:'For taking Cleo out on Outings'
-  },
-  {
-    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
-    status:'',
-    name:'Alex Godinho',
-    thanks:'For letting me know about the Saturday Basketball Runs'
-  },
-  {
-    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
-    status:'Completed',
-    name:'Lee Smith',
-    thanks:'For Job Opportunity'
-  }
-]
-*/
-let importedPreviousAppreciations = [];
-
 const importedPreviousTasks = [
   {
     id: Date.parse('12 Dec 1995 00:12:00 GMT'),
@@ -92,11 +68,11 @@ function XForm(props) {
   const [heal, setHeal] = useState('');
 
   const [appreciations, setAppreciations] = useState([]);
-  const [previousAppreciations, setPreviousAppreciations] = useState(importedPreviousAppreciations);
+  const [previousAppreciations, setPreviousAppreciations] = useState([]);
 
   async function fetchAppreciations() {
     try {
-      importedPreviousAppreciations = await getThanks();
+      const importedPreviousAppreciations = await getThanks();
       console.log('Appreciations:', importedPreviousAppreciations);
       setPreviousAppreciations (importedPreviousAppreciations);
     } catch (error) {

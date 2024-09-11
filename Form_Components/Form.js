@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -25,8 +25,9 @@ import { getFormated, setFormated} from './Format_Form';
 
 import {saveFile} from './Export_Form';
 
-import {storeForm} from './Store_Form';
+import {storeForm, getThanks} from './Store_Form';
 
+/*
 const importedPreviousAppreciations = [
   {
     id: Date.parse('01 Dec 1995 00:12:00 GMT'),
@@ -47,6 +48,8 @@ const importedPreviousAppreciations = [
     thanks:'For Job Opportunity'
   }
 ]
+*/
+let importedPreviousAppreciations = [];
 
 const importedPreviousTasks = [
   {
@@ -90,6 +93,20 @@ function XForm(props) {
 
   const [appreciations, setAppreciations] = useState([]);
   const [previousAppreciations, setPreviousAppreciations] = useState(importedPreviousAppreciations);
+
+  async function fetchAppreciations() {
+    try {
+      importedPreviousAppreciations = await getThanks();
+      console.log('Appreciations:', importedPreviousAppreciations);
+      setPreviousAppreciations (importedPreviousAppreciations);
+    } catch (error) {
+      console.error('Error fetching appreciations:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchAppreciations();
+  }, []);
   
   const [tasks, setTasks] = useState([]);
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);

@@ -2,11 +2,29 @@ import SQLite from 'react-native-sqlite-storage';
 
 const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
 
-function formatThanks(newArray, prevArray){
-
+function formatThanks(tx,mainId,newArray, prevArray){
+  tx.executeSql(`CREATE TABLE IF NOT EXISTS appreciation_table (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    main_table_id INTEGER,
+    status TEXT,
+    name TEXT,
+    thanks TEXT,
+    FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
+    )`,[],() => {
+      console.log('Appreciations Table created or already exists');
+      newArray.filter(item => item.name != "").forEach(item => {
+        tx.executeSql(
+          'INSERT INTO appreciation_table (main_table_id, status, name, thanks) VALUES (?, ?, ?, ?)',
+          [mainId, item.status, item.name, item.thanks]
+        );
+      });
+    },error => {
+        console.log('Error creating table:', error);
+      }
+    );
 }
 
-function formatTasks(newArray,prevArray,futureArray){
+function formatTasks(tx,newArray,prevArray,futureArray){
 
 }
 
@@ -14,13 +32,48 @@ function handleMaxEntries(){
 
 }
 
+function getThanks(amount) {
+  return new Promise((resolve, reject) => {
+    let found = [];
+    console.log(`Looking for Old Appreciations`);
+
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM appreciation_table',
+        [],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            console.log(`Found ${results.rows.length} Appreciations`);
+            for (let i = 0; i < results.rows.length; i++) {
+              found.push(results.rows.item(i));
+            }
+            console.log(`Output found: ${found}`);
+            resolve(found);  // Resolve the Promise with the found data
+          } else {
+            console.log(`WARNING: Found No Old Appreciations`);
+            resolve(found);  // Resolve with an empty array
+          }
+        },
+        error => {
+          console.log('Error executing SQL', error);
+          reject(error);  // Reject the Promise if there's an error
+        }
+      );
+    });
+  });
+}
+
 function storeForm(entry){
     //for debuggin purpposes
+    /*
     db.transaction(tx => {
         tx.executeSql('DROP TABLE IF EXISTS entries');
       });
-    
-    const writeOver = false;
+    db.transaction(tx => {
+        tx.executeSql('DROP TABLE IF EXISTS appreciation_table');
+      });
+    */
+    const writeOverBool = true;
     db.transaction(tx => {
         // Step 1: Create the table (if it doesn't already exist)
         tx.executeSql(
@@ -39,15 +92,17 @@ function storeForm(entry){
           )`,
           [], // No values needed for table creation
           () => {
-            console.log('Table created or already exists');
+            console.log('Entries Table created or already exists');
             tx.executeSql(
             'SELECT * FROM entries WHERE date = ?',
             [entry.date],
             (tx, results) => {
             if (results.rows.length > 0) {
-                // Entry with the same date exists, handle this case (e.g., log a message)
+                //writeOverBool = false
+                //If write over true delete these dates
                 console.log('Entry with the same date already exists');
-            } else {
+            }
+            if(writeOverBool) {
             tx.executeSql(
               `INSERT INTO entries (date, day, heal, mathAdd, mathSubtract, mathMultiply, mathDivide, selectedMath, why, whynot) 
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -63,14 +118,20 @@ function storeForm(entry){
                 entry.explore.why, 
                 entry.explore.whynot
               ],
-              () => {
+              (tx, results) => {
                 console.log('Form entry added');
+                const mainId = results.insertId;
+                formatThanks(tx,mainId,entry.appreciations,entry.previousAppreciations);
+                formatTasks(tx,mainId,entry.tasks,entry.previousTasks,entry.futureTasks);
                 handleMaxEntries(); // Assuming this is a function you've defined
               },
               error => {
                 console.log('Error inserting form entry:', error);
               }
             );
+
+            
+            
           }
         },
         error => {
@@ -82,9 +143,8 @@ function storeForm(entry){
       console.log('Error creating table:', error);
     }
   );
-    formatThanks(entry.appreciations,entry.previousAppreciations);
-    formatTasks(entry.tasks,entry.previousTasks,entry.futureTasks);
+    
     });
 }
 
-export {storeForm};
+export {storeForm, getThanks};

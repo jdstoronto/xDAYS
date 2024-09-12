@@ -62,7 +62,7 @@ function checkboxChange(previous, index){
   else if(updatedItems[index].status != 'Future'){
     updatedItems[index].status = '';
   }
-  updatedItems[index].id = Date.now();
+  updatedItems[index].updateTime = Date.now();
   return updatedItems;
 }
 
@@ -74,14 +74,14 @@ function futureCheckChange(previous, index){
   else{
     updatedItems[index].status = 'Future';
   }
-  updatedItems[index].id = Date.now();
+  updatedItems[index].updateTime = Date.now();
   return updatedItems;  // Return the updated array
 }
 
 function propertyChange(previous, index, name, value){
   const updatedItems = previous;
   updatedItems[index][name] = value;
-  updatedItems[index].id = Date.now();
+  updatedItems[index].updateTime = Date.now();
   return updatedItems;  // Return the updated array
 }
 

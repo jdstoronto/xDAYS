@@ -9,6 +9,7 @@ function formatThanks(tx,mainId,newArray, prevArray){
     status TEXT,
     name TEXT,
     thanks TEXT,
+    updateTime INT,
     viewed_incompleted INT DEFAULT 0,
     viewed_completed INT DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
@@ -16,14 +17,23 @@ function formatThanks(tx,mainId,newArray, prevArray){
       console.log('Appreciations Table created or already exists');
       newArray.filter(item => item.name != "").forEach(item => {
         tx.executeSql(
-          'INSERT INTO appreciation_table (main_table_id, status, name, thanks) VALUES (?, ?, ?, ?)',
-          [mainId, item.status, item.name, item.thanks]
+          'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?,?)',
+          [mainId, item.status, item.name, item.thanks, item.updateTime]
         );
       });
     },error => {
         console.log('Error creating table:', error);
       }
     );
+    
+    prevArray.forEach(item => {
+      tx.executeSql(
+        'UPDATE appreciation_table SET status = ? WHERE id == ?',
+        [item.status, item.id]
+      );
+      console.log(`updating ${item.thanks} for id ${item.id} to status ${item.status}`)
+    });
+
 }
 
 function formatTasks(tx,newArray,prevArray,futureArray){

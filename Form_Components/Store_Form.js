@@ -9,6 +9,8 @@ function formatThanks(tx,mainId,newArray, prevArray){
     status TEXT,
     name TEXT,
     thanks TEXT,
+    viewed_incompleted INT DEFAULT 0,
+    viewed_completed INT DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
     )`,[],() => {
       console.log('Appreciations Table created or already exists');
@@ -32,33 +34,69 @@ function handleMaxEntries(){
 
 }
 
-function getThanks(amount) {
+function getThanks(notCompletedAmount, completedAmount) {
   return new Promise((resolve, reject) => {
-    let found = [];
+    let foundNotComplete = [];
+    let foundComplete = [];
+
     console.log(`Looking for Old Appreciations`);
 
     db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM appreciation_table',
-        [],
-        (tx, results) => {
-          if (results.rows.length > 0) {
-            console.log(`Found ${results.rows.length} Appreciations`);
-            for (let i = 0; i < results.rows.length; i++) {
-              found.push(results.rows.item(i));
+      // First query for not completed appreciations
+      const notCompletedPromise = new Promise((resolveQuery, rejectQuery) => {
+        tx.executeSql(
+          `SELECT * FROM appreciation_table WHERE status='' LIMIT ?`,
+          [notCompletedAmount],
+          (tx, results) => {
+            if (results.rows.length > 0) {
+              for (let i = 0; i < results.rows.length; i++) {
+                foundNotComplete.push(results.rows.item(i));
+              }
+              console.log(`Found Not Completed: ${foundNotComplete}`);
+            } else {
+              console.log(`No Appreciations Found Not Completed`);
             }
-            console.log(`Output found: ${found}`);
-            resolve(found);  // Resolve the Promise with the found data
-          } else {
-            console.log(`WARNING: Found No Old Appreciations`);
-            resolve(found);  // Resolve with an empty array
+            resolveQuery(); // Resolve this query's promise
+          },
+          error => {
+            console.log('Error executing not completed query', error);
+            rejectQuery(error); // Reject this query's promise on error
           }
-        },
-        error => {
-          console.log('Error executing SQL', error);
-          reject(error);  // Reject the Promise if there's an error
-        }
-      );
+        );
+      });
+
+      // Second query for completed appreciations
+      const completedPromise = new Promise((resolveQuery, rejectQuery) => {
+        tx.executeSql(
+          `SELECT * FROM appreciation_table WHERE status='Completed' LIMIT ?`,
+          [completedAmount],
+          (tx, results) => {
+            if (results.rows.length > 0) {
+              for (let i = 0; i < results.rows.length; i++) {
+                foundComplete.push(results.rows.item(i));
+              }
+              console.log(`Found Completed: ${foundComplete}`);
+            } else {
+              console.log(`No Appreciations Found Completed`);
+            }
+            resolveQuery(); // Resolve this query's promise
+          },
+          error => {
+            console.log('Error executing completed query', error);
+            rejectQuery(error); // Reject this query's promise on error
+          }
+        );
+      });
+
+      // Wait for both queries to complete before resolving the main promise
+      Promise.all([notCompletedPromise, completedPromise])
+        .then(() => {
+          const found = foundNotComplete.concat(foundComplete);
+          resolve(found);  // Resolve the main promise after both queries are done
+        })
+        .catch(error => {
+          reject(error);  // Reject the main promise if either query failed
+        });
     });
   });
 }

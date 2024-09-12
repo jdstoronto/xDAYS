@@ -1,6 +1,6 @@
 
 import { TextInput, View, Text, StyleSheet } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
@@ -125,9 +125,9 @@ function ChecksThanks(props) {
     return tasks
   }
 
-  if (props.value.length !== props.count) {
-    props.setValue(createEmptyTasks());  // This will be a future issue if i want to add tasks
-  }
+  useEffect(() => {
+    props.setValue(createEmptyTasks());
+  }, []); // This could be a future issue if i want to add tasks
 
   return(
   <View>

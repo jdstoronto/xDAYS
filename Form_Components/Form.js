@@ -73,6 +73,7 @@ function XForm(props) {
   async function fetchAppreciations() {
     try {
       const importedPreviousAppreciations = await getThanks(5,3);
+      //const [importedPreviousTasks_, importedFutureTasks_] = await getTasks(5,3);
       console.log('Appreciations:', importedPreviousAppreciations);
       setPreviousAppreciations (importedPreviousAppreciations);
     } catch (error) {

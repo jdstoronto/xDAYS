@@ -14,29 +14,61 @@ function formatThanks(tx,mainId,newArray, prevArray){
     viewed_completed INTEGER DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
     )`,[],() => {
-      console.log('Appreciations Table created or already exists');
+      //console.log('Appreciations Table created or already exists');
       newArray.filter(item => item.name != "").forEach(item => {
         tx.executeSql(
           'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?, ?)',
           [mainId, item.status, item.name, item.thanks, item.updateTime],
           (tx, results) => {
-            console.log(`Added Thanks from ${item.name}`);
+            //console.log(`Added Thanks from ${item.name}`);
           },
           error => {
-            console.log('Error inserting item entry:', error);
+            //console.log('Error inserting item entry:', error);
           }
         );
-        console.log('Adding:', item);
+        //console.log('Adding:', item);
       });
     },error => {
-        console.log('Error creating table:', error);
+        //console.log('Error creating table:', error);
       }
     ); 
     updateStatus(tx,'appreciation', prevArray)
 }
 
-function formatTasks(tx,newArray,prevArray,futureArray){
-
+function formatTasks(tx,mainId,newArray,prevArray,futureArray){
+  const tableName = 'task';
+  tx.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName}_table (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    main_table_id INTEGER,
+    status TEXT,
+    task TEXT,
+    updateTime INTEGER,
+    viewed_incompleted INTEGER DEFAULT 0,
+    viewed_completed INTEGER DEFAULT 0,
+    FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
+    )`,[],() => {
+      //console.log(`${tableName} Table created or already exists`);
+      //console.log(`Processing${newArray}`);
+      newArray.filter(item => item.task != "").forEach(item => {
+        //console.log(`Processing ${item}`);
+        tx.executeSql(
+          `INSERT INTO ${tableName}_table (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
+          [mainId, item.status, item.task, item.updateTime],
+          (tx, results) => {
+            //console.log(`Added Thanks from ${item.task}`);
+          },
+          error => {
+            //console.log('Error inserting item entry:', error);
+          }
+        );
+        //console.log('Adding:', item);
+      });
+    },error => {
+        //console.log('Error creating table:', error);
+      }
+    ); 
+    updateStatus(tx,tableName, prevArray)
+    updateStatus(tx,tableName, futureArray)
 }
 
 function updateStatus(tx,tableName, array){
@@ -45,10 +77,10 @@ function updateStatus(tx,tableName, array){
       `UPDATE ${tableName}_table SET status = ? WHERE id == ?`,
       [item.status, item.id],
       ()=>{ 
-        console.log(`updating ${tableName} for id ${item.id} to status ${item.status}`)
+        //console.log(`updating ${tableName} for id ${item.id} to status ${item.status}`)
       },
       error => {
-        console.log('Error inserting form entry:', error);
+        //console.log('Error inserting form entry:', error);
       }
     );
   });
@@ -66,19 +98,18 @@ function getPrevByStatus(tx, tableName, status, amount){
         `SELECT * FROM ${tableName}_table WHERE status = ? ORDER BY updateTime DESC LIMIT ?`,
         [status, amount],
         (tx, results) => {
-          console.log(`Debug ${amount} ${status} for ${tableName}`);
           if (results.rows.length > 0) {
             for (let i = 0; i < results.rows.length; i++) {
               found.push(results.rows.item(i));
             }
-            console.log(`Found ${status}: ${found}`);
+            //console.log(`Found ${status}: ${found}`);
           } else {
-            console.log(`No ${tableName}s Found ${status}`);
+            //console.log(`No ${tableName}s Found ${status}`);
           }
           resolveQuery(found); // Resolve this query's promise
         },
         error => {
-          console.log('Error executing not completed query', error);
+          //console.log('Error executing not completed query', error);
           rejectQuery(error); // Reject this query's promise on error
         }
       );
@@ -91,7 +122,7 @@ function getThanks(notCompletedAmount, completedAmount) {
   const tableName = 'appreciation';
   return new Promise((resolve, reject) => {
 
-    console.log(`Looking for Old ${tableName}s`);
+    //console.log(`Looking for Old ${tableName}s`);
 
     db.transaction(tx => {
       // First query for not completed appreciations
@@ -113,6 +144,34 @@ function getThanks(notCompletedAmount, completedAmount) {
   });
 }
 
+function getTasks(notCompletedAmount, completedAmount, futureAmount) {
+  const tableName = 'task';
+  return new Promise((resolve, reject) => {
+
+    //console.log(`Looking for Old ${tableName}s`);
+
+    db.transaction(tx => {
+      // First query for not completed appreciations
+      const notCompletedPromise = getPrevByStatus(tx, tableName, "", notCompletedAmount);
+
+      // Second query for completed appreciations
+      const completedPromise = getPrevByStatus(tx, tableName, 'Completed', completedAmount);
+
+      // Second query for completed appreciations
+      const futurePromise = getPrevByStatus(tx, tableName, 'Future', futureAmount);
+
+      // Wait for both queries to complete before resolving the main promise
+      Promise.all([notCompletedPromise, completedPromise, futurePromise])
+        .then((value) => {
+          const tasksfound = value[0].concat(value[1]);
+          resolve([tasksfound, value[2]]);  // Resolve the main promise after both queries are done
+        })
+        .catch(error => {
+          reject(error);  // Reject the main promise if either query failed
+        });
+    });
+  });
+}
 
 function resetStorage(){
   db.transaction(tx => {
@@ -144,7 +203,7 @@ function storeForm(entry){
           )`,
           [], // No values needed for table creation
           () => {
-            console.log('Entries Table created or already exists');
+            //console.log('Entries Table created or already exists');
             tx.executeSql(
             'SELECT * FROM entries WHERE date = ?',
             [entry.date],
@@ -152,7 +211,7 @@ function storeForm(entry){
             if (results.rows.length > 0) {
                 //writeOverBool = false
                 //If write over true delete these dates
-                console.log('Entry with the same date already exists');
+                //console.log('Entry with the same date already exists');
             }
             if(writeOverBool) {
             tx.executeSql(
@@ -171,14 +230,14 @@ function storeForm(entry){
                 entry.explore.whynot
               ],
               (tx, results) => {
-                console.log('Form entry added');
+                //console.log('Form entry added');
                 const mainId = results.insertId;
                 formatThanks(tx,mainId,entry.appreciations,entry.previousAppreciations);
                 formatTasks(tx,mainId,entry.tasks,entry.previousTasks,entry.futureTasks);
                 handleMaxEntries(); // Assuming this is a function you've defined
               },
               error => {
-                console.log('Error inserting form entry:', error);
+                //console.log('Error inserting form entry:', error);
               }
             );
 
@@ -187,14 +246,14 @@ function storeForm(entry){
           }
         },
         error => {
-          console.log('Error checking for existing entry:', error);
+          //console.log('Error checking for existing entry:', error);
         }
       );
     },
     error => {
-      console.log('Error creating table:', error);
+      //console.log('Error creating table:', error);
     });  
   });
 }
 
-export {storeForm, getThanks, resetStorage};
+export {storeForm, getThanks, getTasks, resetStorage};

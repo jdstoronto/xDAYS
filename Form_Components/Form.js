@@ -25,21 +25,21 @@ import { getFormated, setFormated} from './Format_Form';
 
 import {saveFile} from './Export_Form';
 
-import {storeForm, getThanks} from './Store_Form';
+import {storeForm, getThanks, getTasks} from './Store_Form';
 
 const importedPreviousTasks = [
   {
-    id: Date.parse('12 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('12 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Work on Resume'
   },
   {
-    id: Date.parse('10 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('10 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Reach out to Cathy Friend'
   },
   {
-    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('04 Dec 1995 00:12:00 GMT'),
     status:'Completed',
     task:'Ask Heather for Reference Letter'
   }
@@ -47,17 +47,17 @@ const importedPreviousTasks = [
 
 const importedFutureTasks = [
   {
-    id: Date.parse('04 Dec 1995 00:01:00 GMT'),
+    updateTime: Date.parse('04 Dec 1995 00:01:00 GMT'),
     status:'Future',
     task:'Buy Helena Flowers'
   },
   {
-    id: Date.parse('24 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('24 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Life Insurance'
   },
   {
-    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('14 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Call Doctors Office'
   }
@@ -69,25 +69,31 @@ function XForm(props) {
 
   const [appreciations, setAppreciations] = useState([]);
   const [previousAppreciations, setPreviousAppreciations] = useState([]);
+    
+  const [tasks, setTasks] = useState([]);
+  const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
+  const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
 
   async function fetchAppreciations() {
     try {
-      const importedPreviousAppreciations = await getThanks(5,3);
-      //const [importedPreviousTasks_, importedFutureTasks_] = await getTasks(5,3);
-      console.log('Appreciations:', importedPreviousAppreciations);
+      const importedPreviousAppreciations = await getThanks(5,2);
+      const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
+      //console.log('Appreciations:', importedPreviousAppreciations);
       setPreviousAppreciations (importedPreviousAppreciations);
+      setPreviousTasks(importedPreviousTasks);
+      setFutureTasks(importedFutureTasks);
+      
+      //console.log('Previous Tasks:', importedPreviousTasks);
+      //console.log('Future Tasks:', importedFutureTasks);
     } catch (error) {
-      console.error('Error fetching appreciations:', error);
+      console.error('Error fetching previous:', error);
     }
   }
 
   useEffect(() => {
     fetchAppreciations();
   }, []);
-  
-  const [tasks, setTasks] = useState([]);
-  const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
-  const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
+
 
   const [life_math, setLife_math] = useState({
     '+':'',

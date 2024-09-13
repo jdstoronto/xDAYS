@@ -54,7 +54,7 @@ function checkboxChange(previous, index){
       else if(updatedItems[index].status != 'Future'){
         updatedItems[index].status = '';
       }
-      updatedItems[index].id = Date.now();
+      updatedItems[index].updateTime = Date.now();
       return updatedItems;
 }
 
@@ -66,7 +66,7 @@ function futureCheckChange(previous, index){
   else{
     updatedItems[index].status = 'Future';
   }
-  updatedItems[index].id = Date.now();
+  updatedItems[index].updateTime = Date.now();
   return updatedItems;  // Return the updated array
 }
 
@@ -134,7 +134,7 @@ function ChecksTasks(props) {
       const element = {
         status:'',
         task:'',
-        id: Date.now(),
+        updateTime: Date.now(),
       };
       tasks.push(element)
     }

@@ -150,7 +150,7 @@ function ChecksTasks(props) {
   <View>
   <Title title = {props.title} />
   {Array.from(props.value).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow} key={index}>
       <CheckBox
             status={value.status}
             onChange={() =>handleCheckboxChange(index)}
@@ -167,7 +167,7 @@ function ChecksTasks(props) {
   <SubTitle title='Previous' onClick = {handleShowPrevious}/>
   
   {showPrevious && (Array.from(props.previousTasks).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow}  key={index}>
     <CheckBox
           status={value.status}
           onChange={() =>handlePreviousCheckboxChange(index)}
@@ -179,7 +179,7 @@ function ChecksTasks(props) {
   <SubTitle title='Future' onClick = {handleShowPrevious}/>
 
   {showPrevious && (Array.from(props.futureTasks).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow}  key={index}>
     <CheckBox
           status={value.status}
           onChange={() =>handleFutureCheckboxChange(index)}

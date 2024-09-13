@@ -20,7 +20,7 @@ function formatThanks(tx,mainId,newArray, prevArray){
           'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?, ?)',
           [mainId, item.status, item.name, item.thanks, item.updateTime],
           (tx, results) => {
-            console.log(`Updated status for ${item.thanks} with id ${item.id}`);
+            console.log(`Added Thanks from ${item.name}`);
           },
           error => {
             console.log('Error inserting item entry:', error);
@@ -118,16 +118,17 @@ function getThanks(notCompletedAmount, completedAmount) {
   });
 }
 
+function resetStorage(){
+  db.transaction(tx => {
+    tx.executeSql('DROP TABLE IF EXISTS entries');
+  });
+  db.transaction(tx => {
+    tx.executeSql('DROP TABLE IF EXISTS appreciation_table');
+  });
+}
+
 function storeForm(entry){
-    //for debuggin purpposes
-    /*
-    db.transaction(tx => {
-        tx.executeSql('DROP TABLE IF EXISTS entries');
-      });
-    db.transaction(tx => {
-        tx.executeSql('DROP TABLE IF EXISTS appreciation_table');
-      });
-    */
+  //resetStorage();
     const writeOverBool = true;
     db.transaction(tx => {
         // Step 1: Create the table (if it doesn't already exist)
@@ -196,10 +197,8 @@ function storeForm(entry){
     },
     error => {
       console.log('Error creating table:', error);
-    }
-  );
-    
-    });
+    });  
+  });
 }
 
-export {storeForm, getThanks};
+export {storeForm, getThanks, resetStorage};

@@ -118,7 +118,6 @@ function ChecksThanks(props) {
         status:'',
         thanks:'',
         name:'',
-        id: Date.now(),
       };
       tasks.push(element)
     }

@@ -9,17 +9,24 @@ function formatThanks(tx,mainId,newArray, prevArray){
     status TEXT,
     name TEXT,
     thanks TEXT,
-    updateTime INT,
-    viewed_incompleted INT DEFAULT 0,
-    viewed_completed INT DEFAULT 0,
+    updateTime INTEGER,
+    viewed_incompleted INTEGER DEFAULT 0,
+    viewed_completed INTEGER DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
     )`,[],() => {
       console.log('Appreciations Table created or already exists');
       newArray.filter(item => item.name != "").forEach(item => {
         tx.executeSql(
-          'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?,?)',
-          [mainId, item.status, item.name, item.thanks, item.updateTime]
+          'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?, ?)',
+          [mainId, item.status, item.name, item.thanks, item.updateTime],
+          (tx, results) => {
+            console.log(`Updated status for ${item.thanks} with id ${item.id}`);
+          },
+          error => {
+            console.log('Error inserting item entry:', error);
+          }
         );
+        console.log('Adding:', item);
       });
     },error => {
         console.log('Error creating table:', error);
@@ -55,7 +62,7 @@ function getThanks(notCompletedAmount, completedAmount) {
       // First query for not completed appreciations
       const notCompletedPromise = new Promise((resolveQuery, rejectQuery) => {
         tx.executeSql(
-          `SELECT * FROM appreciation_table WHERE status='' LIMIT ?`,
+          `SELECT * FROM appreciation_table WHERE status='' ORDER BY updateTime DESC LIMIT ?`,
           [notCompletedAmount],
           (tx, results) => {
             if (results.rows.length > 0) {
@@ -78,7 +85,7 @@ function getThanks(notCompletedAmount, completedAmount) {
       // Second query for completed appreciations
       const completedPromise = new Promise((resolveQuery, rejectQuery) => {
         tx.executeSql(
-          `SELECT * FROM appreciation_table WHERE status='Completed' LIMIT ?`,
+          `SELECT * FROM appreciation_table WHERE status='Completed' ORDER BY updateTime DESC LIMIT ?`,
           [completedAmount],
           (tx, results) => {
             if (results.rows.length > 0) {

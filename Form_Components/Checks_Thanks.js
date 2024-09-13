@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: '30%',
     margin: 2,
+    fontFamily: 'courier',
   },
   inputedname:{
     position: 'relative',
@@ -36,6 +37,7 @@ const styles = StyleSheet.create({
     width: '50%',
     margin: 2,
     flex:1,
+    fontFamily: 'courier',
   },
   inputed:{
     position: 'relative',

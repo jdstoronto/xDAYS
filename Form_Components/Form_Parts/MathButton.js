@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
       height: 40,
       width: '100%',
       margin: 2,
+      fontFamily: 'courier',
     },
   });
 

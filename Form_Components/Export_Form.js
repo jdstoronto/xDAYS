@@ -1,39 +1,45 @@
 import RNFS from 'react-native-fs';
-import { Alert, PermissionsAndroid, Platform } from 'react-native';
+import { Alert} from 'react-native';
+
+
+
+const appendName = () => {
+  const today = new Date();
+
+  const hour= today.getHours().toString().padStart(2, '0');; 
+  const minute = today.getMinutes().toString().padStart(2, '0'); 
+  const sec = today.getSeconds().toString().padStart(2, '0'); 
+
+  return (`-${hour}-${minute}-${sec}`)
+}
 
 const saveFile = async (fileName, content) => {
-    try {
-      // Request permission to write to external storage (for Android 9 and below)
-      if (Platform.OS === 'android' && Platform.Version < 29) {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'Permission to Write Files',
-            message: 'This app needs permission to save files to your storage.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK'
-          }
-        );
-  
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert('Permission Denied', 'Cannot save file without permission.');
-          return;
-        }
+
+  try {
+    const writeFilePath = `/storage/emulated/0/Download/${fileName}${appendName()}.txt`;
+    console.log(`file path: ${writeFilePath}`)
+
+    const fileExists = await RNFS.exists(writeFilePath);
+    if (fileExists) {
+      await RNFS.unlink(writeFilePath); // Delete the existing file
+      //Wanted to be able to save over file but was not able
+      const fileStillExists = await RNFS.exists(writeFilePath);
+      console.log('Existing file found');
+      if (fileStillExists){
+        console.log('Not Deleted')
       }
-  
-      // For Android 10+ (API 29 and above), save to the Downloads directory
-      const directory = Platform.OS === 'android' && Platform.Version >= 29
-        ? RNFS.DownloadDirectoryPath  // Scoped storage path
-        : '/storage/emulated/0/Download';  // Default path for Android 9 and below
-  
-      const filePath = `${directory}/${fileName}.txt`;
-      await RNFS.writeFile(filePath, content, 'utf8');
-      Alert.alert('Success', `File saved at: ${filePath}`);
-    } catch (error) {
-      Alert.alert('Error', 'Could not save the file.');
-      console.error(error);
+    }else{
+      console.log('No existing file found');
     }
-  };
+
+
+    await RNFS.writeFile(writeFilePath, content, 'utf8');
+    Alert.alert('Success', `File saved at: ${writeFilePath}`);
+
+  } catch (error) {
+    Alert.alert('Error', 'Could not save the file.');
+    console.error(error);
+  }
+};
 
 export { saveFile };

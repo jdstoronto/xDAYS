@@ -33,6 +33,10 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+if (!__DEV__) {
+  console.log = () => {};  // Disable console.log in production
+}
+
 const getCurrentDate = () => {
   const today = new Date();
 

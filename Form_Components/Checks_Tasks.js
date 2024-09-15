@@ -1,33 +1,12 @@
 
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
+import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
     color: '#fff',
-  },
-  inputname:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '30%',
-    margin: 2,
-    fontFamily: 'courier',
-  },
-  inputFor:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '50%',
-    margin: 2,
-    flex: 1,
-    fontFamily: 'courier',
   },
   
   inputed:{
@@ -158,10 +137,11 @@ function ChecksTasks(props) {
             onChange={() =>handleCheckboxChange(index)}
             onHold={() => handleFuture(index)}
       />
-      <TextInput
-          style={styles.inputFor}
-          value={value.task}// Use the setter function passed as a prop
-          onChangeText={text => handleTask(text, index)}
+      <XTextInput
+          height = {40}
+          flex = {1}
+          description={value.task}// Use the setter function passed as a prop
+          setDescription={text => handleTask(text, index)}
           placeholder = {`Task`}
           />
     </View>

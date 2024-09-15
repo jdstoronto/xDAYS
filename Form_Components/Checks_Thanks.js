@@ -1,22 +1,12 @@
 
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
+import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
     color: '#fff',
-  },
-  inputname:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '30%',
-    margin: 2,
-    fontFamily: 'courier',
   },
   inputedname:{
     position: 'relative',
@@ -27,17 +17,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     textAlignVertical: 'center',
-  },
-  inputFor:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '50%',
-    margin: 2,
-    flex:1,
-    fontFamily: 'courier',
   },
   inputed:{
     position: 'relative',
@@ -139,16 +118,19 @@ function ChecksThanks(props) {
             status={value.status}
             onChange={() => handleCheckboxChange(index)}
       />
-      <TextInput
-          style={styles.inputname} // Use the setter function passed as a prop
-          value={value.name}
-          onChangeText={text => handlePropertyChange(index,'name',text)}
+      <XTextInput
+          height = {40}
+          width = '30%'
+          description={value.name}
+          setDescription={text => handlePropertyChange(index,'name',text)}
           placeholder = {`Name`}
           />
-      <TextInput
-          style={styles.inputFor}
-          value={value.thanks}
-          onChangeText={text => handlePropertyChange(index,'thanks',text)}
+      <XTextInput
+          height = {40}
+          width = '50%'
+          flex = {1}
+          description={value.thanks}
+          setDescription={text => handlePropertyChange(index,'thanks',text)}
           placeholder = {`Thank You..`}
           />
     </View>

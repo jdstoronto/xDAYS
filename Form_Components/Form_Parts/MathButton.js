@@ -1,5 +1,6 @@
 import { TextInput, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
+import {XTextInput} from './FormParts_Index'
 
 const styles = StyleSheet.create({
     Container: {  // Fixed spelling from 'Containter' to 'Container'
@@ -28,16 +29,6 @@ const styles = StyleSheet.create({
     TitleSelected: {
       color:'black'
   },
-    inputname:{
-      position: 'relative',
-      flexDirection: 'row',
-      borderWidth: 2,
-      borderColor: '#fff',
-      height: 40,
-      width: '100%',
-      margin: 2,
-      fontFamily: 'courier',
-    },
   });
 
 
@@ -64,11 +55,12 @@ const MathButton = ({title, setSelected, selected,setValue, life_math}) => {
       <TouchableOpacity style={[styles.Button, title == selected && styles.ButtonSelected]} onPress={pressed}>
           <Text style ={[styles.Title, title == selected && styles.TitleSelected]}>{title}</Text>
       </TouchableOpacity>
-      <TextInput
-        style={styles.inputname} // Use the setter function passed as a prop
+      <XTextInput
+        height= {40}
+        width = '100%'
+        description={life_math[title]}
+        setDescription={text => update(text)}
         placeholder = {'word'}
-        value={life_math[title]}
-        onChangeText={update}
         />
     </View>
   );

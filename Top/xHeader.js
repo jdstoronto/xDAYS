@@ -16,7 +16,7 @@ import {
       <View style={styles.container}>
         <Text style={styles.centeredText}>{props.date}</Text>
         <Image
-          source={require('../Assets/2024_08-29_X_Logo.jpg')} // Path to the image file
+          source={require('../assets/2024_08-29_X_Logo.jpg')} // Path to the image file
           style={styles.image}
         />
       </View>
@@ -36,6 +36,7 @@ import {
       color: '#fff',
       textAlign: 'center',
       fontWeight: 'bold',
+      fontFamily: 'monospace',
     },
     image: {
       position: 'absolute',

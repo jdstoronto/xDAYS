@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -21,50 +21,25 @@ import {
   ExploreEquation
 } from './Form_Index';
 
-import { 
-  getFormated, 
-  formatDays , 
-  formatHealth,
-  formatThanks, 
-  formatTasks,
-  formatMath, 
-  formatExplore,
-  formatDate} from './Format_Form';
+import { getFormated, setFormated} from './Format_Form';
 
-const importedPreviousAppreciations = [
-  {
-    id: Date.parse('01 Dec 1995 00:12:00 GMT'),
-    status:'',
-    name:'Helena',
-    thanks:'For taking Cleo out on Outings'
-  },
-  {
-    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
-    status:'',
-    name:'Alex Godinho',
-    thanks:'For letting me know about the Saturday Basketball Runs'
-  },
-  {
-    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
-    status:'Completed',
-    name:'Lee Smith',
-    thanks:'For Job Opportunity'
-  }
-]
+import {saveFile} from './Export_Form';
+
+import {storeForm, getThanks, getTasks} from './Store_Form';
 
 const importedPreviousTasks = [
   {
-    id: Date.parse('12 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('12 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Work on Resume'
   },
   {
-    id: Date.parse('10 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('10 Dec 1995 00:12:00 GMT'),
     status:'',
     task:'Reach out to Cathy Friend'
   },
   {
-    id: Date.parse('04 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('04 Dec 1995 00:12:00 GMT'),
     status:'Completed',
     task:'Ask Heather for Reference Letter'
   }
@@ -72,17 +47,17 @@ const importedPreviousTasks = [
 
 const importedFutureTasks = [
   {
-    id: Date.parse('04 Dec 1995 00:01:00 GMT'),
+    updateTime: Date.parse('04 Dec 1995 00:01:00 GMT'),
     status:'Future',
     task:'Buy Helena Flowers'
   },
   {
-    id: Date.parse('24 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('24 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Life Insurance'
   },
   {
-    id: Date.parse('14 Dec 1995 00:12:00 GMT'),
+    updateTime: Date.parse('14 Dec 1995 00:12:00 GMT'),
     status:'Future',
     task:'Call Doctors Office'
   }
@@ -93,11 +68,32 @@ function XForm(props) {
   const [heal, setHeal] = useState('');
 
   const [appreciations, setAppreciations] = useState([]);
-  const [previousAppreciations, setPreviousAppreciations] = useState(importedPreviousAppreciations);
-  
+  const [previousAppreciations, setPreviousAppreciations] = useState([]);
+    
   const [tasks, setTasks] = useState([]);
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
   const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
+
+  async function fetchAppreciations() {
+    try {
+      const importedPreviousAppreciations = await getThanks(5,2);
+      const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
+      //console.log('Appreciations:', importedPreviousAppreciations);
+      setPreviousAppreciations (importedPreviousAppreciations);
+      setPreviousTasks(importedPreviousTasks);
+      setFutureTasks(importedFutureTasks);
+      
+      //console.log('Previous Tasks:', importedPreviousTasks);
+      //console.log('Future Tasks:', importedFutureTasks);
+    } catch (error) {
+      console.error('Error fetching previous:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchAppreciations();
+  }, []);
+
 
   const [life_math, setLife_math] = useState({
     '+':'',
@@ -115,15 +111,25 @@ function XForm(props) {
   // Function to handle form submission
   const handleSubmit = () => {
     // You can process the data here, such as sending it to a server
-    formatDate(props.date);
-    formatDays(day);
-    formatHealth(heal)
-    formatThanks(appreciations,previousAppreciations)
-    formatTasks(tasks,previousTasks,futureTasks)
-    formatMath(life_math,  selected_math)
-    formatExplore(explore, selected_math)
+    const entry = {
+      date: props.date,
+      day: day,
+      heal: heal,
+      appreciations: appreciations,
+      previousAppreciations: previousAppreciations,
+      tasks: tasks,
+      previousTasks: previousTasks,
+      futureTasks: futureTasks,
+      lifeMath: life_math,
+      selectedMath: selected_math,
+      explore: explore
+    }
+
+    setFormated(entry);
+    storeForm(entry);
     setSubmit(true);
-    Alert.alert('Form Submitted', getFormated());
+    saveFile(`x${props.date}`, getFormated())
+    //Alert.alert('Form Submitted', getFormated());
     
   };
 

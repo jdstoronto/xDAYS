@@ -1,31 +1,12 @@
 
 import { TextInput, View, Text, StyleSheet } from 'react-native';
-import React, {useState} from 'react';
-import {CheckBox, SubTitle, Title} from "./Form_Parts/FormParts_Index"
+import React, {useState, useEffect} from 'react';
+import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
 
 const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
     color: '#fff',
-  },
-  inputname:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '30%',
-    margin: 2,
-  },
-  inputFor:{
-    position: 'relative',
-    flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    height: 40,
-    width: '50%',
-    margin: 2,
-    flex: 1,
   },
   
   inputed:{
@@ -54,7 +35,7 @@ function checkboxChange(previous, index){
       else if(updatedItems[index].status != 'Future'){
         updatedItems[index].status = '';
       }
-      updatedItems[index].id = Date.now();
+      updatedItems[index].updateTime = Date.now();
       return updatedItems;
 }
 
@@ -66,7 +47,7 @@ function futureCheckChange(previous, index){
   else{
     updatedItems[index].status = 'Future';
   }
-  updatedItems[index].id = Date.now();
+  updatedItems[index].updateTime = Date.now();
   return updatedItems;  // Return the updated array
 }
 
@@ -134,31 +115,33 @@ function ChecksTasks(props) {
       const element = {
         status:'',
         task:'',
-        id: Date.now(),
+        updateTime: Date.now(),
       };
       tasks.push(element)
     }
     return tasks
   }
 
-  if (props.value.length !== props.count) {
-    props.setValue(createEmptyTasks());  // This will be a future issue if i want to add tasks
-  }
+  useEffect(() => {
+    props.setValue(createEmptyTasks());
+  }, []); // This could be a future issue if i want to add tasks
+
 
   return(
   <View>
   <Title title = {props.title} />
   {Array.from(props.value).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow} key={index}>
       <CheckBox
             status={value.status}
             onChange={() =>handleCheckboxChange(index)}
             onHold={() => handleFuture(index)}
       />
-      <TextInput
-          style={styles.inputFor}
-          value={value.task}// Use the setter function passed as a prop
-          onChangeText={text => handleTask(text, index)}
+      <XTextInput
+          height = {40}
+          flex = {1}
+          description={value.task}// Use the setter function passed as a prop
+          setDescription={text => handleTask(text, index)}
           placeholder = {`Task`}
           />
     </View>
@@ -166,7 +149,7 @@ function ChecksTasks(props) {
   <SubTitle title='Previous' onClick = {handleShowPrevious}/>
   
   {showPrevious && (Array.from(props.previousTasks).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow}  key={index}>
     <CheckBox
           status={value.status}
           onChange={() =>handlePreviousCheckboxChange(index)}
@@ -178,7 +161,7 @@ function ChecksTasks(props) {
   <SubTitle title='Future' onClick = {handleShowPrevious}/>
 
   {showPrevious && (Array.from(props.futureTasks).map((value, index) => (
-    <View style ={styles.checkrow}>
+    <View style ={styles.checkrow}  key={index}>
     <CheckBox
           status={value.status}
           onChange={() =>handleFutureCheckboxChange(index)}

@@ -1,0 +1,17 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/coure.ttf",
+      "sha1": "559f151af9c40750a24cdc96ada16922b0c0d4d4"
+    },
+    {
+      "path": "assets/fonts/ds-digi.ttf",
+      "sha1": "1ce1ed312b41a237cb253c706290c0fd7287859d"
+    },
+    {
+      "path": "assets/fonts/perfect_dos.ttf",
+      "sha1": "5317ad60a0b5c579d18b80998bf16f5f8aa690ac"
+    }
+  ]
+}

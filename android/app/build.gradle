@@ -118,4 +118,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation(project(':react-native-push-notification')) {
+    exclude group: 'com.android.support', module: 'support-compat'
+}
 }

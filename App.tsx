@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import type {PropsWithChildren} from 'react';
 
 import {
@@ -13,21 +13,18 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from 'react-native';
 
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 import XHeader from './Top/xHeader';
 import XForm from './Form_Components/Form';
+import NotifyDay from './Notify_Components/Notify';
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -48,6 +45,9 @@ const getCurrentDate = () => {
 };
 
 function App(): React.JSX.Element {
+  
+  NotifyDay();
+
   const isDarkMode = useColorScheme() === 'dark';
   const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
 

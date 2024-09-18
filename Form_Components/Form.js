@@ -74,7 +74,7 @@ function XForm(props) {
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
   const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
 
-  async function fetchAppreciations() {
+  async function fetchData() {
     try {
       const importedPreviousAppreciations = await getThanks(5,2);
       const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
@@ -91,7 +91,7 @@ function XForm(props) {
   }
 
   useEffect(() => {
-    fetchAppreciations();
+    fetchData();
   }, []);
 
 

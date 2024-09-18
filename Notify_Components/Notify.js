@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Image,
-  Dimensions,
-  Button,
-  Alert, // Import Alert from react-native
-} from 'react-native';
 
-import {storeForm, getThanks, getTasks} from './Store_Form';
+import { getTasks } from '../Form_Components/Store_Form';
 
 import PushNotification from 'react-native-push-notification';
 
@@ -38,11 +25,44 @@ const createNotificationChannel = () => {
   );
 };
 
+
+
+function formatTasksNotification(tasks){
+  let formattedString = ``;
+  let tasksStringArray = tasks.map(task=> `□ ${task.task}`);
+  formattedString = tasksStringArray.join('\n');
+  return formattedString;
+}
+
+
 function NotifyDay(props) {
+  const [tasks, setTasks] = useState([])
+
+  async function fetchData(){
+    try {
+      const [importedTasks, _ ] = await getTasks(3,0,0);
+      isArray = Array.isArray(importedTasks);
+      console.log(`This returned ${isArray ? 'Array':'Not an Array'} ${importedTasks}`);
+      setTasks(importedTasks);
+    }
+    catch(error){
+      console.error('Could Not Find Tasks, Error:', error);
+    }
+  }
+  
   useEffect(()=> {
-    createNotificationChannel();
-    sendNotification('xDAYS','Journal Today?')
+    fetchData();
   }, [])
+
+  useEffect(() => {
+    console.log(`Found the following length ${tasks.length} sample object ${tasks[0]}`);
+    if (tasks.length != 0) {
+      const taskNotification = formatTasksNotification(tasks);
+      createNotificationChannel();
+      sendNotification('xDAYS - Tasks Reminder', taskNotification);
+    }
+  },[tasks])
+
 }
 
 

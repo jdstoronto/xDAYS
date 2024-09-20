@@ -3,6 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { getTasks } from '../Form_Components/Store_Form';
 
 import PushNotification from 'react-native-push-notification';
+import BackgroundTimer from 'react-native-background-timer';
+
+
+const sendTimedNotification = (title, message, time) => {
+  PushNotification.localNotificationSchedule({
+    id: '001',
+    channelId: "xdays-channel",  // The channel ID
+    title: title,
+    message: message,
+    date: time,  // The time when the notification should fire
+    allowWhileIdle: true,  // Ensure the notification fires even if the device is idle
+  });
+};
 
 const sendNotification = (title, message) => {
   PushNotification.localNotification({
@@ -25,7 +38,35 @@ const createNotificationChannel = () => {
   );
 };
 
+const calculateCountdownUntilTarget = (targetHour, targetMinute) => {
 
+  const now = new Date();
+  const targetTime = new Date();
+  
+  // Set target hour and minute
+  targetTime.setHours(targetHour, targetMinute, 0, 0);
+
+  // If target time has already passed today, schedule it for tomorrow
+  if (targetTime <= now) {
+    targetTime.setDate(targetTime.getDate() + 1);
+  }
+
+  // Return the difference in milliseconds
+  return targetTime - now;
+
+};
+
+const calculateTimeUntilTarget = (targetHour, targetMinute) => {
+  const now = new Date();
+  const targetTime = new Date();
+  console.log(`time is ${now}`)
+  targetTime.setHours(targetHour, targetMinute, 0, 0);
+
+  if (targetTime <= now) {
+    targetTime.setDate(targetTime.getDate() + 1);
+  }
+  return targetTime;
+};
 
 function formatTasksNotification(tasks){
   let formattedString = ``;
@@ -33,7 +74,6 @@ function formatTasksNotification(tasks){
   formattedString = tasksStringArray.join('\n');
   return formattedString;
 }
-
 
 function NotifyDay(props) {
   const [tasks, setTasks] = useState([])
@@ -55,12 +95,35 @@ function NotifyDay(props) {
   }, [])
 
   useEffect(() => {
-    console.log(`Found the following length ${tasks.length} sample object ${tasks[0]}`);
+    const [hours, min] = [12, 30];
+    
+    PushNotification.cancelAllLocalNotifications();
+
+    const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
+    console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0) {
       const taskNotification = formatTasksNotification(tasks);
+      console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
       createNotificationChannel();
-      sendNotification('xDAYS - Tasks Reminder', taskNotification);
+      //sendNotification('xDAYS - Tasks Reminder', taskNotification);
+      sendTimedNotification('xDAYS - Tasks Reminder A', taskNotification, timeUntil2_30PM );
+    
+      const taskTimer = calculateCountdownUntilTarget(hours, min);
+      
+      console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
+      BackgroundTimer.setTimeout(async () => {
+        sendNotification('xDAYS - Tasks Reminder B', taskNotification);
+      }, taskTimer);
     }
+
+    const nightTimer = calculateCountdownUntilTarget(21, 30);
+      
+      console.log(`Sent Background Scheduled Notification for ${nightTimer}`);
+      BackgroundTimer.setTimeout(async () => {
+        sendNotification('xDAYS - Journal Reminder', taskNotification);
+      }, nightTimer);
+    
+
   },[tasks])
 
 }

@@ -24,7 +24,7 @@ import {
     return (
       <View>
         <View style={styles.container}>
-          <TouchableOpacity onPress={toggleShowDropDown}>
+          <TouchableOpacity onPress={toggleShowDropDown} style={styles.imageContainer}>
             <Image
               source={require('../assets/2024_08-29_X_Logo.jpg')} // Path to the image file
               style={styles.image}
@@ -55,13 +55,17 @@ import {
       fontWeight: 'bold',
       fontFamily: 'monospace',
     },
-    image: {
+    imageContainer:{
       position: 'absolute',
+      top: 0,  // Position the image in the top-right corner
+      left: 0, // Adjust as needed for different corners
+    },
+    image: {
+      
       width: 50,
       height: 50,
       resizeMode: 'cover',
-      top: 0,  // Position the image in the top-right corner
-      left: 0, // Adjust as needed for different corners
+
     },
   });
   

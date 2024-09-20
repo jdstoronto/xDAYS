@@ -10,7 +10,8 @@ import {
   Image,
   Dimensions,
   Button,
-  Alert, // Import Alert from react-native
+  Alert,
+  TouchableOpacity, // Import Alert from react-native
 } from 'react-native';
 
 import {
@@ -134,22 +135,21 @@ function XForm(props) {
   // Header Form Functions
   useEffect(()=>{
     if(props.clear){
-      props.resetClear;
-      console.log('Debug Reset Clear')
+      props.resetClear();
     }
   }, [props.clear])
 
   useEffect(()=>{
     if(props.refresh){
-      props.resetRefresh;
-      console.log('Debug Reset Refresh')
+      props.resetRefresh();
+
     }
   }, [props.refresh])
 
   useEffect(()=>{
     if(props.update){
-      props.resetUpdate;
-      console.log('Debug Reset Update')
+      props.resetUpdate();
+
     }
   }, [props.update])
 
@@ -171,9 +171,9 @@ function XForm(props) {
       <ExploreEquation title='Explore' value={explore} setValue={setExplore} selected={selected_math} height={90} life_math={life_math}/>
       {/* Probably should have made button touchable opacity */}
       <View style = {styles.buttonContainer}>
-        <View style = {{width:'50%',borderColor: 'white',borderWidth: 2,}}>
-        <Button color ='black' title="Process" onPress={handleSubmit} />
-        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Process</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -185,12 +185,30 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button:{
     margin: 15,
     flex: 1,
     color: 'white',
     fontFamily: 'Perfect DOS VGA 437',
     justifyContent: 'center',
     alignItems: 'center',
+    width:'50%',
+    borderColor: 'white',
+    borderWidth: 2,
+  },
+  
+  buttonText:{
+    margin: 10,
+    flex: 1,
+    color: 'white',
+    fontFamily: 'ds-digi',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 20,
   },
 
 });

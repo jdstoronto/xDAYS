@@ -78,13 +78,11 @@ function XForm(props) {
     try {
       const importedPreviousAppreciations = await getThanks(5,2);
       const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
-      //console.log('Appreciations:', importedPreviousAppreciations);
+
       setPreviousAppreciations (importedPreviousAppreciations);
       setPreviousTasks(importedPreviousTasks);
       setFutureTasks(importedFutureTasks);
       
-      //console.log('Previous Tasks:', importedPreviousTasks);
-      //console.log('Future Tasks:', importedFutureTasks);
     } catch (error) {
       console.error('Error fetching previous:', error);
     }
@@ -132,6 +130,28 @@ function XForm(props) {
     //Alert.alert('Form Submitted', getFormated());
     
   };
+
+  // Header Form Functions
+  useEffect(()=>{
+    if(props.clear){
+      props.resetClear;
+      console.log('Debug Reset Clear')
+    }
+  }, [props.clear])
+
+  useEffect(()=>{
+    if(props.refresh){
+      props.resetRefresh;
+      console.log('Debug Reset Refresh')
+    }
+  }, [props.refresh])
+
+  useEffect(()=>{
+    if(props.update){
+      props.resetUpdate;
+      console.log('Debug Reset Update')
+    }
+  }, [props.update])
 
   return (
     <View style ={styles.container}>

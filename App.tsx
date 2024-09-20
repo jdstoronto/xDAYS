@@ -21,7 +21,7 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
-import XHeader from './Top/xHeader';
+import XHeader from './Top_Components/xHeader';
 import XForm from './Form_Components/Form';
 import NotifyDay from './Notify_Components/Notify';
 
@@ -51,6 +51,34 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
 
+  const [refresh, setRefresh] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [clear, setClear] = useState(false);
+
+  const handleRefresh = () => {
+    setRefresh(true);  // Trigger refresh
+  };
+
+  const resetRefresh = () => {
+    setRefresh(false);  // Trigger refresh
+  };
+
+  const handleUpdate = () => {
+    setUpdate(true);  // Trigger Update
+  };
+
+  const resetUpdate = () => {
+    setUpdate(false);  // Trigger Update
+  };
+
+  const handleClear = () => {
+    setClear(true);  // Trigger Clear
+  };
+
+  const resetClear = () => {
+    setClear(false);  // Trigger Clear
+  };
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
@@ -64,12 +92,18 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <XHeader date = {currentDate} />
+        <XHeader date = {currentDate} 
+        handleClear = {handleClear}
+        handleRefresh = {handleRefresh}
+        handleUpdate = {handleUpdate}/>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <XForm date = {currentDate} />
+          <XForm date = {currentDate} 
+            clear = {clear} resetClear = {resetClear}
+            refresh = {refresh} resetRefresh = {resetRefresh}
+            update = {update} resetUpdate = {resetUpdate}/>
         </View>
       </ScrollView>
     </SafeAreaView>

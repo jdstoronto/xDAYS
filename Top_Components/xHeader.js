@@ -61,7 +61,6 @@ import {
       left: 0, // Adjust as needed for different corners
     },
     image: {
-      
       width: 50,
       height: 50,
       resizeMode: 'cover',

@@ -1,4 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
+import { Alert} from 'react-native';
 
 const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
 
@@ -69,6 +70,16 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
     ); 
     updateStatus(tx,tableName, prevArray)
     updateStatus(tx,tableName, futureArray)
+}
+
+function updateThanks(tx,prevArray){
+  updateStatus(tx,'appreciation', prevArray)
+}
+
+function updateTasks(tx,prevArray,futureArray){
+  const tableName = 'task';
+  updateStatus(tx,tableName, prevArray)
+  updateStatus(tx,tableName, futureArray)
 }
 
 function updateStatus(tx,tableName, array){
@@ -256,4 +267,17 @@ function storeForm(entry){
   });
 }
 
-export {storeForm, getThanks, getTasks, resetStorage};
+function updateForm(entry){
+  db.transaction(tx => {
+    updateThanks(tx,entry.previousAppreciations);
+    updateTasks(tx,entry.previousTasks,entry.futureTasks);
+    
+    Alert.alert('Success', `Updated Form`);
+    },
+    error => {
+      console.log('Error updating form', error);
+    }
+  );
+}
+
+export {storeForm, updateForm, getThanks, getTasks, resetStorage};

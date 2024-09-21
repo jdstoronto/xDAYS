@@ -26,7 +26,7 @@ import { getFormated, setFormated} from './Format_Form';
 
 import {saveFile} from './Export_Form';
 
-import {storeForm, getThanks, getTasks} from './Store_Form';
+import {storeForm, updateForm, getThanks, getTasks} from './Store_Form';
 
 const importedPreviousTasks = [
   {
@@ -149,7 +149,12 @@ function XForm(props) {
   useEffect(()=>{
     if(props.update){
       props.resetUpdate();
-
+      entry = {
+        previousAppreciations: previousAppreciations,
+        previousTasks: previousTasks,
+        futureTasks: futureTasks,
+      }
+      updateForm(entry)
     }
   }, [props.update])
 

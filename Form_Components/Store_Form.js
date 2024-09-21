@@ -216,11 +216,11 @@ function storeForm(entry){
           () => {
             //console.log('Entries Table created or already exists');
             tx.executeSql(
-            'SELECT id FROM entries WHERE date = ?',
+            'SELECT id FROM entries WHERE date == ?',
             [entry.date],
             (tx, results) => {
             if (results.rows.length > 0) {
-              id = results.rows[0]
+              id = results.rows.item(0).id
               tx.executeSql(
                 `UPDATE entries 
                 SET day = ?, heal = ?, mathAdd = ?, mathSubtract = ?, mathMultiply = ?, mathDivide = ?, selectedMath = ?, why = ?, whynot = ?
@@ -236,14 +236,19 @@ function storeForm(entry){
                   entry.explore.why, 
                   entry.explore.whynot,
                   id
-                ],[],
+                ],
+                (tx, results) => {
+                  const mainId = results.insertId;
+                  formatThanks(tx,mainId,entry.appreciations,entry.previousAppreciations);
+                  formatTasks(tx,mainId,entry.tasks,entry.previousTasks,entry.futureTasks);
+                },
                 error => {
                   console.log('Error updating form entry:', error);
                 }
               );
                 //writeOverBool = false
                 //If write over true delete these dates
-                console.log(`Entry with the same date: ${entry.date} already exists with ID${id}`);
+                console.log(`Entry with the same date: ${entry.date} already exists with ID ${id}`);
             }
             else{
             tx.executeSql(

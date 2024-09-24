@@ -239,32 +239,46 @@ function getPrevDayCount (currentDateInput, selectedDateInput){
 
 }
 
-function getPrevDay(currentDate, numDaysPrevious) {
+function getPrevDays(currentDate, numDaysPrevious) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
         tx.executeSql(
           `SELECT * FROM entries 
             WHERE date !=?
-            LIMIT 1 OFFSET ${numDaysPrevious}`,
+            LIMIT ${numDaysPrevious}`,
           [currentDate],
           (tx, results) => {
-            const entry = results.rows.item(0);
-            const mainId = entry.id;
-            
-            const prevTasks = getPrevTasks(tx, mainId);
-            const prevThanks = getPrevThanks(tx, mainId);
+            for (let i = 0; i < results.rows.length; i++) {
+              const entry = results.rows.item(i);
+              const mainId = entry.id;
+              
+              const prevTasks = getPrevTasks(tx, mainId);
+              const prevThanks = getPrevThanks(tx, mainId);
 
-            entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
+              entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
 
-            Promise.all([prevThanks, prevTasks])
-            .then(([thanks, tasks]) => {
-              entry.appreciations = thanks;
-              entry.tasks = tasks;
-              console.log(entry);
-              resolve(entry)
+              promises.push (
+                Promise.all([prevThanks, prevTasks])
+                .then(([thanks, tasks]) => {
+                entry.appreciations = thanks;
+                entry.tasks = tasks;
+
+                entries.push(entry)
+              })
+              .catch(error => {
+                console.log('Error Getting Previous Day Level 2:', error);
+                reject(error);  // Reject the main promise if either query failed
+              })
+            );
+            }
+
+            Promise.all(promises)
+            .then(() => {
+              console.log(entries);  // All entries with their associated data
+              resolve(entries);      // Resolve with the full array of entries
             })
             .catch(error => {
-              console.log('Error Getting Previous Day Level 2:', error);
+              console.log('Error Getting Previous Day Level 1:', error);
               reject(error);  // Reject the main promise if either query failed
             });
           },
@@ -409,4 +423,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDay};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays};

@@ -129,26 +129,26 @@ function getPrevByStatus(tx, tableName, status, amount){
   return listpromise;
 }
 
-function getPrevByMainId(tx, tableName, mainId, amount){
+function getPrevByMainId(tx, tableName, mainId){
   // First query for not completed appreciations
   let found = []
   const listpromise = new Promise((resolveQuery, rejectQuery) => {
     tx.executeSql(
       `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
-      [mainId, amount],
+      [mainId],
       (tx, results) => {
         if (results.rows.length > 0) {
           for (let i = 0; i < results.rows.length; i++) {
             found.push(results.rows.item(i));
           }
-          //console.log(`Found ${status}: ${found}`);
+          console.log(`Found Previous ${tableName}s:${mainId}: ${found}`);
         } else {
-          //console.log(`No ${tableName}s Found ${status}`);
+          console.log(`No Previous ${tableName}s:${mainId}: None`);
         }
         resolveQuery(found); // Resolve this query's promise
       },
       error => {
-        //console.log('Error executing not completed query', error);
+        console.log('Error executing not completed query', error);
         rejectQuery(error); // Reject this query's promise on error
       }
     );
@@ -212,9 +212,9 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
   });
 }
 
-const createDateFromString = (dateString) => {
+function createDateFromString(dateString){
   // Split the string into day, month, year parts
-  const [day, month, year] = dateString.split('-');
+  const [year, month, day] = dateString.split('-');
 
   // Parse the values, and handle the year (add 2000 if it's less than 100)
   const parsedDay = parseInt(day, 10);
@@ -223,51 +223,56 @@ const createDateFromString = (dateString) => {
 
   // Create a new Date object
   const date = new Date(parsedYear, parsedMonth, parsedDay);
+
+  return date;
 }
 
 function getPrevDayCount (currentDateInput, selectedDateInput){
   currentDate = createDateFromString(currentDateInput);
   selectedDate= createDateFromString(selectedDateInput);
+
   timeDifference = currentDate-selectedDate;
-
+  
   const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
+  
   return dayDifference;
 
 }
 
 function getPrevDay(currentDate, numDaysPrevious) {
-  prevDayPromise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     db.transaction(tx => {
         tx.executeSql(
-          `SELECT entries 
-            WHERE date!=?
+          `SELECT * FROM entries 
+            WHERE date !=?
             LIMIT 1 OFFSET ${numDaysPrevious}`,
           [currentDate],
           (tx, results) => {
-            const mainId = results.insertId;
+            const entry = results.rows.item(0);
+            const mainId = entry.id;
+            
             const prevTasks = getPrevTasks(tx, mainId);
             const prevThanks = getPrevThanks(tx, mainId);
-            
-            results.prevDayCount = getPrevDayCount(currentDate, results.date)
-            console.log(`Result: \n ${results}`)
+
+            entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
 
             Promise.all([prevThanks, prevTasks])
             .then(([thanks, tasks]) => {
-              results.appreciations = thanks;
-              results.tasks = tasks;
-              resolve(results)
+              entry.appreciations = thanks;
+              entry.tasks = tasks;
+              console.log(entry);
+              resolve(entry)
             })
             .catch(error => {
+              console.log('Error Getting Previous Day Level 2:', error);
               reject(error);  // Reject the main promise if either query failed
             });
           },
           error => {
-            console.log('Error updating form entry:', error);
+            console.log('Error Getting Previous Day:', error);
           }
         );
     });
-    return prevDayPromise;
   });
 }
 

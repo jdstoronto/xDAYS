@@ -59,7 +59,7 @@ const calculateCountdownUntilTarget = (targetHour, targetMinute) => {
 const calculateTimeUntilTarget = (targetHour, targetMinute) => {
   const now = new Date();
   const targetTime = new Date();
-  console.log(`time is ${now}`)
+  //console.log(`Notify time is ${now}`)
   targetTime.setHours(targetHour, targetMinute, 0, 0);
 
   if (targetTime <= now) {
@@ -82,12 +82,13 @@ function NotifyDay({date, prevDays, setPrevDays}){
     try {
       const [importedTasks, _ ] = await getTasks(3,0,0);
       const prevDay = await getPrevDay(date, 0);
+      console.log(`DEBUG: Found Previous days ${prevDay.prevDayCount} ago`)
       isArray = Array.isArray(importedTasks);
       console.log(`This returned ${isArray ? 'Array':'Not an Array'} ${importedTasks}`);
       setTasks(importedTasks);
     }
     catch(error){
-      console.error('Could Not Find Tasks, Error:', error);
+      console.error('Could Not Find Fetch Data, Error:', error);
     }
   }
   
@@ -96,12 +97,12 @@ function NotifyDay({date, prevDays, setPrevDays}){
   }, [])
 
   useEffect(() => {
-    const [hours, min] = [12, 30];
+    const [hours, min] = [22, 4];
     
-    PushNotification.cancelAllLocalNotifications();
+    PushNotification.cancelAllLocalNotifications();//Deleting all previous setted notifications
 
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
-    console.log(`Found the following length ${tasks.length}`);
+    //console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0) {
       const taskNotification = formatTasksNotification(tasks);
       console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
@@ -117,15 +118,23 @@ function NotifyDay({date, prevDays, setPrevDays}){
       }, taskTimer);
     }
 
-    const nightTimer = calculateCountdownUntilTarget(21, 30);
-      
-      console.log(`Sent Background Scheduled Notification for ${nightTimer}`);
-      BackgroundTimer.setTimeout(async () => {
-        sendNotification('xDAYS - Journal Reminder', taskNotification);
-      }, nightTimer);
+    
     
 
   },[tasks])
+
+  useEffect(()=>{
+    const [hours, min] = [22, 30];
+
+    PushNotification.cancelAllLocalNotifications();//Deleting all previous setted notifications
+
+    const nightTimer = calculateCountdownUntilTarget(21, 30);
+      
+    console.log(`Sent Background Scheduled Notification for ${nightTimer}`);
+    BackgroundTimer.setTimeout(async () => {
+      sendNotification('xDAYS - Journal Reminder', taskNotification);
+    }, nightTimer);
+  },[prevDays])
 
   return null;
 }

@@ -25,7 +25,6 @@ import XHeader from './Top_Components/xHeader';
 import XForm from './Form_Components/Form';
 import NotifyDay from './Notify_Components/Notify';
 
-
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -45,8 +44,8 @@ const getCurrentDate = () => {
 };
 
 function App(): React.JSX.Element {
-  
-  NotifyDay();
+
+  const [previousDays, setPreviousDays] = useState([]);
 
   const isDarkMode = useColorScheme() === 'dark';
   const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
@@ -85,6 +84,10 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
+      <NotifyDay 
+        prevDays={previousDays}
+        setPrevDays={setPreviousDays}
+        date = {currentDate} />
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}

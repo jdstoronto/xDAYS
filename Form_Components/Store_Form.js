@@ -129,6 +129,34 @@ function getPrevByStatus(tx, tableName, status, amount){
   return listpromise;
 }
 
+function getPrevByMainId(tx, tableName, mainId, amount){
+  // First query for not completed appreciations
+  let found = []
+  const listpromise = new Promise((resolveQuery, rejectQuery) => {
+    tx.executeSql(
+      `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
+      [mainId, amount],
+      (tx, results) => {
+        if (results.rows.length > 0) {
+          for (let i = 0; i < results.rows.length; i++) {
+            found.push(results.rows.item(i));
+          }
+          //console.log(`Found ${status}: ${found}`);
+        } else {
+          //console.log(`No ${tableName}s Found ${status}`);
+        }
+        resolveQuery(found); // Resolve this query's promise
+      },
+      error => {
+        //console.log('Error executing not completed query', error);
+        rejectQuery(error); // Reject this query's promise on error
+      }
+    );
+  });
+
+return listpromise;
+}
+
 function getThanks(notCompletedAmount, completedAmount) {
   const tableName = 'appreciation';
   return new Promise((resolve, reject) => {
@@ -184,6 +212,77 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
   });
 }
 
+const createDateFromString = (dateString) => {
+  // Split the string into day, month, year parts
+  const [day, month, year] = dateString.split('-');
+
+  // Parse the values, and handle the year (add 2000 if it's less than 100)
+  const parsedDay = parseInt(day, 10);
+  const parsedMonth = parseInt(month, 10) - 1; // Months are zero-based in JavaScript
+  const parsedYear = parseInt(year, 10) + (year < 100 ? 2000 : 0); // Adjust year if it's 2 digits
+
+  // Create a new Date object
+  const date = new Date(parsedYear, parsedMonth, parsedDay);
+}
+
+function getPrevDayCount (currentDateInput, selectedDateInput){
+  currentDate = createDateFromString(currentDateInput);
+  selectedDate= createDateFromString(selectedDateInput);
+  timeDifference = currentDate-selectedDate;
+
+  const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+  return dayDifference;
+
+}
+
+function getPrevDay(currentDate, numDaysPrevious) {
+  prevDayPromise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+        tx.executeSql(
+          `SELECT entries 
+            WHERE date!=?
+            LIMIT 1 OFFSET ${numDaysPrevious}`,
+          [currentDate],
+          (tx, results) => {
+            const mainId = results.insertId;
+            const prevTasks = getPrevTasks(tx, mainId);
+            const prevThanks = getPrevThanks(tx, mainId);
+            
+            results.prevDayCount = getPrevDayCount(currentDate, results.date)
+            console.log(`Result: \n ${results}`)
+
+            Promise.all([prevThanks, prevTasks])
+            .then(([thanks, tasks]) => {
+              results.appreciations = thanks;
+              results.tasks = tasks;
+              resolve(results)
+            })
+            .catch(error => {
+              reject(error);  // Reject the main promise if either query failed
+            });
+          },
+          error => {
+            console.log('Error updating form entry:', error);
+          }
+        );
+    });
+    return prevDayPromise;
+  });
+}
+
+function getPrevThanks(tx, mainId){
+  const tableName = 'appreciation';
+  const completedPromise = getPrevByMainId(tx, tableName, mainId);
+  return completedPromise 
+}
+
+function getPrevTasks(tx, mainId){
+  const tableName = 'task';
+  const completedPromise  = getPrevByMainId(tx, tableName, mainId);
+  return completedPromise 
+}
+
 function resetStorage(){
   db.transaction(tx => {
     tx.executeSql('DROP TABLE IF EXISTS entries');
@@ -191,11 +290,13 @@ function resetStorage(){
   db.transaction(tx => {
     tx.executeSql('DROP TABLE IF EXISTS appreciation_table');
   });
+  db.transaction(tx => {
+    tx.executeSql('DROP TABLE IF EXISTS task_table');
+  });
 }
 
 function storeForm(entry){
   //resetStorage();
-    const writeOverBool = true;
     db.transaction(tx => {
         // Step 1: Create the table (if it doesn't already exist)
         tx.executeSql(
@@ -251,7 +352,7 @@ function storeForm(entry){
                 console.log(`Entry with the same date: ${entry.date} already exists with ID ${id}`);
             }
             else{
-            tx.executeSql(
+              tx.executeSql(
               `INSERT INTO entries (date, day, heal, mathAdd, mathSubtract, mathMultiply, mathDivide, selectedMath, why, whynot) 
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
               [
@@ -277,9 +378,6 @@ function storeForm(entry){
                 //console.log('Error inserting form entry:', error);
               }
             );
-
-            
-            
           }
         },
         error => {
@@ -306,4 +404,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDay};

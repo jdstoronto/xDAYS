@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { getTasks } from '../Form_Components/Store_Form';
+import { getTasks, getPrevDay } from '../Form_Components/Store_Form';
 
 import PushNotification from 'react-native-push-notification';
 import BackgroundTimer from 'react-native-background-timer';
@@ -75,12 +75,13 @@ function formatTasksNotification(tasks){
   return formattedString;
 }
 
-function NotifyDay(props) {
+function NotifyDay({date, prevDays, setPrevDays}){
   const [tasks, setTasks] = useState([])
 
   async function fetchData(){
     try {
       const [importedTasks, _ ] = await getTasks(3,0,0);
+      const prevDay = await getPrevDay(date, 0);
       isArray = Array.isArray(importedTasks);
       console.log(`This returned ${isArray ? 'Array':'Not an Array'} ${importedTasks}`);
       setTasks(importedTasks);
@@ -126,6 +127,7 @@ function NotifyDay(props) {
 
   },[tasks])
 
+  return null;
 }
 
 

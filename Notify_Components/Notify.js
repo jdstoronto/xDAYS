@@ -26,7 +26,7 @@ const sendNotification = (title, message) => {
 };
 
 const createNotificationChannel = () => {
-  console.log(`Try to create channel may already exist`);
+  //console.log(`Try to create channel may already exist`);
   PushNotification.createChannel(
     {
       channelId: "xdays-channel", // Unique channel ID
@@ -82,7 +82,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
     try {
       const [importedTasks, _ ] = await getTasks(3,0,0);
       const importedPrevDays = await getPrevDays(date, 4);
-      console.log(`Prev Days Imported ${importedPrevDays}`)
+      //console.log(`Prev Days Imported ${importedPrevDays}`)
       setPrevDays(importedPrevDays);
       isArray = Array.isArray(importedTasks);
       //console.log(`This returned ${isArray ? 'Array':'Not an Array'} ${importedTasks}`);
@@ -101,21 +101,21 @@ function NotifyDay({date, prevDays, setPrevDays}){
   
 
   useEffect(() => {
-    const [hours, min] = [22, 0];
+    const [hours, min] = [12, 30];
     
     
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
     //console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0) {
       const taskNotification = formatTasksNotification(tasks);
-      console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
+      //console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
       createNotificationChannel();
       //sendNotification('xDAYS - Tasks Reminder', taskNotification);
       sendTimedNotification('xDAYS - Tasks Reminder A', taskNotification, timeUntil2_30PM );
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
-      console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
+      //console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
       BackgroundTimer.setTimeout(async () => {
         sendNotification('xDAYS - Tasks Reminder B', taskNotification);
       }, taskTimer);
@@ -124,7 +124,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
 
   useEffect(()=>{
     if (prevDays.length != 0){
-      const [hours, min] = [22, 26];
+      const [hours, min] = [21, 30];
 
       const nightTimer = calculateCountdownUntilTarget(hours, min);
       

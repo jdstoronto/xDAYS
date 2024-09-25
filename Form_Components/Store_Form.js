@@ -142,9 +142,9 @@ function getPrevByMainId(tableName, mainId){
             for (let i = 0; i < results.rows.length; i++) {
               found.push(results.rows.item(i));
             }
-            console.log(`Found Previous ${tableName}s:${mainId}: ${found}`);
+            //console.log(`Found Previous ${tableName}s:${mainId}: ${found}`);
           } else {
-            console.log(`No Previous ${tableName}s:${mainId}: None`);
+            //console.log(`No Previous ${tableName}s:${mainId}: None`);
           }
           resolveQuery(found); // Resolve this query's promise
         },
@@ -254,11 +254,7 @@ function getPrevDays(currentDate, numDaysPrevious) {
               for (let i = 0; i < results.rows.length; i++) {
                 const entry = results.rows.item(i);
                 const mainId = entry.id;
-                
                 entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
-
-                console.log(`Looking at ${i} from ${results.rows.length}`)
-
                 entries.push(entry)
               }
               resolve(entries);      // Resolve with the full array of entries

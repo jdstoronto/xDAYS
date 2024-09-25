@@ -41,7 +41,8 @@ import {
       color: 'white',
       fontFamily: 'ds-digi',
       fontSize: 20,
-      padding: 3,
+      padding: 10,
+      paddingHorizontal: 20,
     }
   
   });

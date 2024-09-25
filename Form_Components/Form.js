@@ -75,6 +75,37 @@ function XForm(props) {
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
   const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
 
+  const [life_math, setLife_math] = useState({
+    '+':'',
+    '-':'',
+    '*':'',
+    '÷':''
+  });
+  const [selected_math, setSelected_math] = useState('');
+  const [explore, setExplore] = useState({
+    why:'',
+    whynot:''
+  });
+  const [submit, setSubmit] = useState(false);
+
+  function clearData (){
+    setDay('');
+    setHeal('');
+    setAppreciations([]);
+    setTasks([]);
+    setLife_math({
+      '+':'',
+      '-':'',
+      '*':'',
+      '÷':''
+    });
+    setSelected_math('')
+    setExplore({
+      why:'',
+      whynot:''
+    });
+  }
+
   async function fetchData() {
     try {
       const importedPreviousAppreciations = await getThanks(5,2);
@@ -92,20 +123,6 @@ function XForm(props) {
   useEffect(() => {
     fetchData();
   }, []);
-
-
-  const [life_math, setLife_math] = useState({
-    '+':'',
-    '-':'',
-    '*':'',
-    '÷':''
-  });
-  const [selected_math, setSelected_math] = useState('');
-  const [explore, setExplore] = useState({
-    why:'',
-    whynot:''
-  });
-  const [submit, setSubmit] = useState(false);
 
   // Function to handle form submission
   const handleSubmit = () => {
@@ -136,13 +153,18 @@ function XForm(props) {
   useEffect(()=>{
     if(props.clear){
       props.resetClear();
+      Alert.alert('Clear', `Clearing Data`);
+      clearData();
+
     }
   }, [props.clear])
 
   useEffect(()=>{
     if(props.refresh){
       props.resetRefresh();
-
+      clearData();
+      fetchData();
+      Alert.alert('Refresh', `Fetching Data`);
     }
   }, [props.refresh])
 

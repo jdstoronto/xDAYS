@@ -129,29 +129,31 @@ function getPrevByStatus(tx, tableName, status, amount){
   return listpromise;
 }
 
-function getPrevByMainId(tx, tableName, mainId){
+function getPrevByMainId(tableName, mainId){
   // First query for not completed appreciations
   let found = []
   const listpromise = new Promise((resolveQuery, rejectQuery) => {
-    tx.executeSql(
-      `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
-      [mainId],
-      (tx, results) => {
-        if (results.rows.length > 0) {
-          for (let i = 0; i < results.rows.length; i++) {
-            found.push(results.rows.item(i));
+    db.transaction(tx => {
+      tx.executeSql(
+        `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
+        [mainId],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            for (let i = 0; i < results.rows.length; i++) {
+              found.push(results.rows.item(i));
+            }
+            console.log(`Found Previous ${tableName}s:${mainId}: ${found}`);
+          } else {
+            console.log(`No Previous ${tableName}s:${mainId}: None`);
           }
-          console.log(`Found Previous ${tableName}s:${mainId}: ${found}`);
-        } else {
-          console.log(`No Previous ${tableName}s:${mainId}: None`);
+          resolveQuery(found); // Resolve this query's promise
+        },
+        error => {
+          console.log('Error executing not completed query', error);
+          rejectQuery(error); // Reject this query's promise on error
         }
-        resolveQuery(found); // Resolve this query's promise
-      },
-      error => {
-        console.log('Error executing not completed query', error);
-        rejectQuery(error); // Reject this query's promise on error
-      }
-    );
+      );
+    });
   });
 
 return listpromise;
@@ -248,57 +250,55 @@ function getPrevDays(currentDate, numDaysPrevious) {
             LIMIT ${numDaysPrevious}`,
           [currentDate],
           (tx, results) => {
-            for (let i = 0; i < results.rows.length; i++) {
-              const entry = results.rows.item(i);
-              const mainId = entry.id;
-              
-              const prevTasks = getPrevTasks(tx, mainId);
-              const prevThanks = getPrevThanks(tx, mainId);
+              entries = []
+              for (let i = 0; i < results.rows.length; i++) {
+                const entry = results.rows.item(i);
+                const mainId = entry.id;
+                
+                entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
 
-              entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
-
-              promises.push (
-                Promise.all([prevThanks, prevTasks])
-                .then(([thanks, tasks]) => {
-                entry.appreciations = thanks;
-                entry.tasks = tasks;
+                console.log(`Looking at ${i} from ${results.rows.length}`)
 
                 entries.push(entry)
-              })
-              .catch(error => {
-                console.log('Error Getting Previous Day Level 2:', error);
-                reject(error);  // Reject the main promise if either query failed
-              })
-            );
-            }
-
-            Promise.all(promises)
-            .then(() => {
-              console.log(entries);  // All entries with their associated data
+              }
               resolve(entries);      // Resolve with the full array of entries
-            })
-            .catch(error => {
-              console.log('Error Getting Previous Day Level 1:', error);
-              reject(error);  // Reject the main promise if either query failed
-            });
           },
           error => {
-            console.log('Error Getting Previous Day:', error);
-          }
-        );
+            console.log('Error Getting Previous Day Level 1:', error);
+          });
     });
+  }).then(async (entries) => {
+    try {
+      // Process the async work AFTER the transaction is complete
+      for (let entry of entries) {
+        const mainId = entry.id;
+
+        // Fetch tasks and thanks asynchronously
+        const prevTasks = await getPrevTasks(mainId);
+        const prevThanks = await getPrevThanks(mainId);
+
+        entry.appreciations = prevThanks;
+        entry.tasks = prevTasks;
+      }
+
+      return entries;  // Return the final result with tasks and thanks
+
+    } catch (error) {
+      console.error('Error during asynchronous fetching of tasks/thanks:', error);
+      throw error;
+    }
   });
 }
 
-function getPrevThanks(tx, mainId){
+async function getPrevThanks(mainId){
   const tableName = 'appreciation';
-  const completedPromise = getPrevByMainId(tx, tableName, mainId);
+  const completedPromise = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }
 
-function getPrevTasks(tx, mainId){
+async function getPrevTasks(mainId){
   const tableName = 'task';
-  const completedPromise  = getPrevByMainId(tx, tableName, mainId);
+  const completedPromise  = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }
 

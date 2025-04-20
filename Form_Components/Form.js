@@ -10,7 +10,8 @@ import {
   Image,
   Dimensions,
   Button,
-  Alert, // Import Alert from react-native
+  Alert,
+  TouchableOpacity, // Import Alert from react-native
 } from 'react-native';
 
 import {
@@ -25,7 +26,7 @@ import { getFormated, setFormated} from './Format_Form';
 
 import {saveFile} from './Export_Form';
 
-import {storeForm, getThanks, getTasks} from './Store_Form';
+import {storeForm, updateForm, getThanks, getTasks} from './Store_Form';
 
 const importedPreviousTasks = [
   {
@@ -74,27 +75,6 @@ function XForm(props) {
   const [previousTasks, setPreviousTasks] = useState(importedPreviousTasks);
   const [futureTasks, setFutureTasks] = useState(importedFutureTasks);
 
-  async function fetchAppreciations() {
-    try {
-      const importedPreviousAppreciations = await getThanks(5,2);
-      const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
-      //console.log('Appreciations:', importedPreviousAppreciations);
-      setPreviousAppreciations (importedPreviousAppreciations);
-      setPreviousTasks(importedPreviousTasks);
-      setFutureTasks(importedFutureTasks);
-      
-      //console.log('Previous Tasks:', importedPreviousTasks);
-      //console.log('Future Tasks:', importedFutureTasks);
-    } catch (error) {
-      console.error('Error fetching previous:', error);
-    }
-  }
-
-  useEffect(() => {
-    fetchAppreciations();
-  }, []);
-
-
   const [life_math, setLife_math] = useState({
     '+':'',
     '-':'',
@@ -107,6 +87,42 @@ function XForm(props) {
     whynot:''
   });
   const [submit, setSubmit] = useState(false);
+
+  function clearData (){
+    setDay('');
+    setHeal('');
+    setAppreciations([]);
+    setTasks([]);
+    setLife_math({
+      '+':'',
+      '-':'',
+      '*':'',
+      '÷':''
+    });
+    setSelected_math('')
+    setExplore({
+      why:'',
+      whynot:''
+    });
+  }
+
+  async function fetchData() {
+    try {
+      const importedPreviousAppreciations = await getThanks(5,2);
+      const [importedPreviousTasks, importedFutureTasks] = await getTasks(5,1,2);
+
+      setPreviousAppreciations (importedPreviousAppreciations);
+      setPreviousTasks(importedPreviousTasks);
+      setFutureTasks(importedFutureTasks);
+      
+    } catch (error) {
+      console.error('Error fetching previous:', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Function to handle form submission
   const handleSubmit = () => {
@@ -133,6 +149,37 @@ function XForm(props) {
     
   };
 
+  // Header Form Functions
+  useEffect(()=>{
+    if(props.clear){
+      props.resetClear();
+      Alert.alert('Clear', `Clearing Data`);
+      clearData();
+
+    }
+  }, [props.clear])
+
+  useEffect(()=>{
+    if(props.refresh){
+      props.resetRefresh();
+      clearData();
+      fetchData();
+      Alert.alert('Refresh', `Fetching Data`);
+    }
+  }, [props.refresh])
+
+  useEffect(()=>{
+    if(props.update){
+      props.resetUpdate();
+      entry = {
+        previousAppreciations: previousAppreciations,
+        previousTasks: previousTasks,
+        futureTasks: futureTasks,
+      }
+      updateForm(entry)
+    }
+  }, [props.update])
+
   return (
     <View style ={styles.container}>
       
@@ -151,9 +198,9 @@ function XForm(props) {
       <ExploreEquation title='Explore' value={explore} setValue={setExplore} selected={selected_math} height={90} life_math={life_math}/>
       {/* Probably should have made button touchable opacity */}
       <View style = {styles.buttonContainer}>
-        <View style = {{width:'50%',borderColor: 'white',borderWidth: 2,}}>
-        <Button color ='black' title="Process" onPress={handleSubmit} />
-        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Process</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -165,12 +212,30 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button:{
     margin: 15,
     flex: 1,
     color: 'white',
     fontFamily: 'Perfect DOS VGA 437',
     justifyContent: 'center',
     alignItems: 'center',
+    width:'50%',
+    borderColor: 'white',
+    borderWidth: 2,
+  },
+  
+  buttonText:{
+    margin: 10,
+    flex: 1,
+    color: 'white',
+    fontFamily: 'ds-digi',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 20,
   },
 
 });

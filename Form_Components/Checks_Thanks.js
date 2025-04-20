@@ -106,8 +106,10 @@ function ChecksThanks(props) {
   }
 
   useEffect(() => {
+    if(props.value.length == 0){
     props.setValue(createEmptyTasks());
-  }, []); // This could be a future issue if i want to add tasks
+    }
+  }, [props.value]); // This could be a future issue if i want to add tasks
 
   return(
   <View>

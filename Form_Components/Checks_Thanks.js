@@ -2,6 +2,7 @@
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
+import {getNames} from "./Store_Form"
 
 const styles = StyleSheet.create({
   highlight: {
@@ -66,9 +67,21 @@ function propertyChange(previous, index, name, value){
   return updatedItems;  // Return the updated array
 }
 
+async function showNames(index, value, setNames){
+  let nameList = [];
+  try {
+    nameList = await getNames(value+ '%');
+    setNames(nameList)
+  } catch (error) {
+    //console.log('failed to find other names with ' + value)
+  }
+  return nameList
+}
+
 function ChecksThanks(props) {
 
   const [showPrevious, setShowPrevious] = useState(false);
+  const [names, setNames] = useState([])
 
   const handleCheckboxChange = (index) => {
     props.setValue((prevItems) => {
@@ -83,6 +96,9 @@ function ChecksThanks(props) {
   };
 
   const handlePropertyChange = (index, name, value) => {
+    if(name == `name`){
+      let names_found = showNames(index, value, setNames);
+    }
     props.setValue((prevItems) => {
       return propertyChange([...prevItems], index, name, value);  // Return the updated array
     });
@@ -126,6 +142,7 @@ function ChecksThanks(props) {
           description={value.name}
           setDescription={text => handlePropertyChange(index,'name',text)}
           placeholder = {`Name`}
+          itemList = {names}
           />
       <XTextInput
           height = {40}

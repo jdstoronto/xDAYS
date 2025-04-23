@@ -98,7 +98,6 @@ function updateStatus(tx,tableName, array){
 }
 
 function handleMaxEntries(){
-
 }
 
 function getPrevByStatus(tx, tableName, status, amount){
@@ -212,6 +211,34 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
         });
     });
   });
+}
+
+function getNames(input){
+  const amount = 3;
+  let found = [] ;
+  return new Promise((resolve, reject) => {
+    db.transaction( tx =>
+      tx.executeSql(
+        `SELECT name FROM appreciation_table WHERE name LIKE ? ORDER BY updateTime DESC LIMIT ?`,
+        [input, amount],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            for (let i = 0; i < results.rows.length; i++) {
+              found.push(results.rows.item(i).name);
+            }
+          } else {
+            console.log(`Found nothing`);
+          }
+          //console.log(found)
+          resolve(found); // Resolve this query's promise
+        },
+        error => {
+          console.log('Error executing not completed query', error);
+          reject(error); // Reject this query's promise on error
+        }
+      )
+    );
+  })
 }
 
 function createDateFromString(dateString){
@@ -419,4 +446,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getNames};

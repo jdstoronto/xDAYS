@@ -219,7 +219,7 @@ function getNames(input){
   return new Promise((resolve, reject) => {
     db.transaction( tx =>
       tx.executeSql(
-        `SELECT name FROM appreciation_table WHERE name LIKE ? ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT name FROM appreciation_table WHERE name LIKE ? COLLATE NOCASE ORDER BY updateTime DESC LIMIT ?`,
         [input, amount],
         (tx, results) => {
           if (results.rows.length > 0) {

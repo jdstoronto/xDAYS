@@ -67,15 +67,19 @@ function propertyChange(previous, index, name, value){
   return updatedItems;  // Return the updated array
 }
 
-async function showNames(index, value, setNames){
+async function listChange(previous, index, name, value){
   let nameList = [];
+  const updatedItems = previous;
+  updatedItems[index][name] = value;
+  updatedItems[index].updateTime = Date.now();
   try {
     nameList = await getNames(value+ '%');
-    setNames(nameList)
+    updatedItems[index].names = nameList;
+    //setNames(nameList)
   } catch (error) {
-    //console.log('failed to find other names with ' + value)
+    console.log('failed to find other names with ' + value)
   }
-  return nameList
+  return updatedItems;
 }
 
 function ChecksThanks(props) {
@@ -95,13 +99,17 @@ function ChecksThanks(props) {
     });
   };
 
-  const handlePropertyChange = (index, name, value) => {
-    if(name == `name`){
-      let names_found = showNames(index, value, setNames);
+  const handlePropertyChange = async (index, name, value) => {
+    if(name == `name` && value != null){
+      const updatedItems = await listChange([...props.value], index, name, value);
+      props.setValue(updatedItems);
+      return;
     }
+    else{
     props.setValue((prevItems) => {
       return propertyChange([...prevItems], index, name, value);  // Return the updated array
     });
+    }
   };
 
   const handleShowPrevious = () => {
@@ -115,6 +123,7 @@ function ChecksThanks(props) {
         status:'',
         thanks:'',
         name:'',
+        names:[],
       };
       tasks.push(element)
     }
@@ -142,7 +151,7 @@ function ChecksThanks(props) {
           description={value.name}
           setDescription={text => handlePropertyChange(index,'name',text)}
           placeholder = {`Name`}
-          itemList = {names}
+          itemList = {value.names}
           />
       <XTextInput
           height = {40}

@@ -62,7 +62,10 @@ const XTextInput = (props) => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.dropdownItem}
-                onPress={() => props.setDescription(item)}
+                onPress={() => {
+                  props.setDescription(item);
+                  setShowDropdown(false);
+                }}
               >
                 <Text style={styles.dropdownText}>{item}</Text>
               </TouchableOpacity>

@@ -34,13 +34,14 @@ const styles = StyleSheet.create({
 
 const XTextInput = (props) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selected, setSelected] = useState(false);
 
   useEffect(() => {
-    setShowDropdown(props.itemList != null && props.itemList.length > 0);
+    setShowDropdown(props.itemList != null && props.itemList.length > 0 && !selected);
     console.log(props.itemList)
   }, [props.itemList]);
 
-  console.log(showDropdown)
+  //console.log(showDropdown)
 
   return (
     <View style={{ width: props.width, flex: props.flex, margin: 2,position: 'relative'}}>
@@ -49,7 +50,10 @@ const XTextInput = (props) => {
         style={[styles.input, { height: props.height }]}
         value={props.description}
         multiline={true}
-        onChangeText={props.setDescription}
+        onChangeText={(text) => {
+          setSelected(false);         // reset selected state
+          props.setDescription(text); // update the description
+        }}        
         placeholder={props.placeholder}
         placeholderTextColor="#aaa"
       />
@@ -64,7 +68,7 @@ const XTextInput = (props) => {
                 style={styles.dropdownItem}
                 onPress={() => {
                   props.setDescription(item);
-                  setShowDropdown(false);
+                  setSelected(true);
                 }}
               >
                 <Text style={styles.dropdownText}>{item}</Text>

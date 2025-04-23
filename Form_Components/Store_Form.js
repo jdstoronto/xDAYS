@@ -213,18 +213,21 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
   });
 }
 
-function getNames(input){
+function getList(type, tableName, input){
   const amount = 3;
   let found = [] ;
   return new Promise((resolve, reject) => {
     db.transaction( tx =>
       tx.executeSql(
-        `SELECT name FROM appreciation_table WHERE name LIKE ? COLLATE NOCASE ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT ${type} FROM ${tableName}_table WHERE ${type} LIKE ? COLLATE NOCASE ORDER BY updateTime DESC LIMIT ?`,
         [input, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
             for (let i = 0; i < results.rows.length; i++) {
-              found.push(results.rows.item(i).name);
+              const foundItem = results.rows.item(i)[type];
+              if (!found.includes(foundItem)) {
+                found.push(foundItem);
+              }
             }
           } else {
             console.log(`Found nothing`);
@@ -446,4 +449,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getNames};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList};

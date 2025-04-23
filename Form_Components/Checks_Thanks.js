@@ -2,7 +2,7 @@
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
-import {getNames} from "./Store_Form"
+import {getList} from "./Store_Form"
 
 const styles = StyleSheet.create({
   highlight: {
@@ -73,7 +73,7 @@ async function listChange(previous, index, name, value){
   updatedItems[index][name] = value;
   updatedItems[index].updateTime = Date.now();
   try {
-    nameList = await getNames(value+ '%');
+    nameList = await getList(`name`, `appreciation`, value+ '%');
     updatedItems[index].names = nameList;
     //setNames(nameList)
   } catch (error) {
@@ -85,7 +85,6 @@ async function listChange(previous, index, name, value){
 function ChecksThanks(props) {
 
   const [showPrevious, setShowPrevious] = useState(false);
-  const [names, setNames] = useState([])
 
   const handleCheckboxChange = (index) => {
     props.setValue((prevItems) => {

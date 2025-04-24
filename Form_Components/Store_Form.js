@@ -105,7 +105,7 @@ function getPrevByStatus(tx, tableName, status, amount){
     let found = []
     const listpromise = new Promise((resolveQuery, rejectQuery) => {
       tx.executeSql(
-        `SELECT * FROM ${tableName}_table WHERE status = ? ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT * FROM ${tableName} WHERE status = ? ORDER BY updateTime DESC LIMIT ?`,
         [status, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -219,7 +219,7 @@ function getList(type, tableName, input){
   return new Promise((resolve, reject) => {
     db.transaction( tx =>
       tx.executeSql(
-        `SELECT ${type} FROM ${tableName}_table WHERE ${type} LIKE ? COLLATE NOCASE ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT ${type} FROM ${tableName} WHERE ${type} LIKE ? COLLATE NOCASE ORDER BY id DESC LIMIT ?`,
         [input, amount],
         (tx, results) => {
           if (results.rows.length > 0) {

@@ -1,6 +1,7 @@
 import { TextInput, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {XTextInput} from './FormParts_Index'
+import { getList } from '../Store_Form';
 
 const styles = StyleSheet.create({
     Container: {  // Fixed spelling from 'Containter' to 'Container'
@@ -31,14 +32,37 @@ const styles = StyleSheet.create({
   },
   });
 
+  const mathMap = {
+    '+':'mathAdd',
+    '-':'mathSubtract',
+    '*':'mathMultiply',
+    '÷':'mathDivide'
+  }
+
+  async function listChange(type, value){
+    let prevList = [];
+    console.log(type)
+    try {
+      prevList = await getList(type, `entries`, value+ '%');
+      updatedItems.names = prevList;
+      //setNames(nameList)
+    } catch (error) {
+      console.log('failed to find other previous items with ' + value);
+    }
+    return prevList;
+  }
 
 const MathButton = ({title, setSelected, selected,setValue, life_math}) => {
+  
+  const [previousItems, setPreviousItems] = useState([]);
 
-  const update = (newValue) => {
+  const update = async (newValue) => {
     setValue((prevState) => ({
       ...prevState,  // Spread the previous state to retain existing data
       [title]: newValue
     }));
+    const storedItems = await listChange(mathMap[title], newValue)
+    setPreviousItems(storedItems)
   };
 
   const pressed = () =>{
@@ -61,6 +85,7 @@ const MathButton = ({title, setSelected, selected,setValue, life_math}) => {
         description={life_math[title]}
         setDescription={text => update(text)}
         placeholder = {'word'}
+        itemList = {previousItems}
         />
     </View>
   );

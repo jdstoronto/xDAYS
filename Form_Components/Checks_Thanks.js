@@ -73,7 +73,7 @@ async function listChange(previous, index, name, value){
   updatedItems[index][name] = value;
   updatedItems[index].updateTime = Date.now();
   try {
-    nameList = await getList(`name`, `appreciation`, value+ '%');
+    nameList = await getList(`name`, `appreciation_table`, value+ '%');
     updatedItems[index].names = nameList;
     //setNames(nameList)
   } catch (error) {

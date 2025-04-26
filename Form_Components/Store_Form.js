@@ -37,8 +37,8 @@ function formatThanks(tx,mainId,newArray, prevArray){
 }
 
 function formatTasks(tx,mainId,newArray,prevArray,futureArray){
-  const tableName = 'task';
-  tx.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName}_table (
+  const tableName = 'task_table';
+  tx.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName} (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     main_table_id INTEGER,
     status TEXT,
@@ -53,7 +53,7 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
       newArray.filter(item => item.task != "").forEach(item => {
         //console.log(`Processing ${item}`);
         tx.executeSql(
-          `INSERT INTO ${tableName}_table (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
+          `INSERT INTO ${tableName} (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
           [mainId, item.status, item.task, item.updateTime],
           (tx, results) => {
             //console.log(`Added Thanks from ${item.task}`);
@@ -73,11 +73,11 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
 }
 
 function updateThanks(tx,prevArray){
-  updateStatus(tx,'appreciation', prevArray)
+  updateStatus(tx,'appreciation_table', prevArray)
 }
 
 function updateTasks(tx,prevArray,futureArray){
-  const tableName = 'task';
+  const tableName = 'task_table';
   updateStatus(tx,tableName, prevArray)
   updateStatus(tx,tableName, futureArray)
 }
@@ -85,7 +85,7 @@ function updateTasks(tx,prevArray,futureArray){
 function updateStatus(tx,tableName, array){
   array.forEach(item => {
     tx.executeSql(
-      `UPDATE ${tableName}_table SET status = ? WHERE id == ?`,
+      `UPDATE ${tableName} SET status = ? WHERE id == ?`,
       [item.status, item.id],
       ()=>{ 
         //console.log(`updating ${tableName} for id ${item.id} to status ${item.status}`)
@@ -134,7 +134,7 @@ function getPrevByMainId(tableName, mainId){
   const listpromise = new Promise((resolveQuery, rejectQuery) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
+        `SELECT * FROM ${tableName} WHERE main_table_id = ? ORDER BY updateTime DESC`,
         [mainId],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -159,7 +159,7 @@ return listpromise;
 }
 
 function getThanks(notCompletedAmount, completedAmount) {
-  const tableName = 'appreciation';
+  const tableName = 'appreciation_table';
   return new Promise((resolve, reject) => {
 
     //console.log(`Looking for Old ${tableName}s`);
@@ -185,7 +185,7 @@ function getThanks(notCompletedAmount, completedAmount) {
 }
 
 function getTasks(notCompletedAmount, completedAmount, futureAmount) {
-  const tableName = 'task';
+  const tableName = 'task_table';
   return new Promise((resolve, reject) => {
 
     //console.log(`Looking for Old ${tableName}s`);
@@ -317,13 +317,13 @@ function getPrevDays(currentDate, numDaysPrevious) {
 }
 
 async function getPrevThanks(mainId){
-  const tableName = 'appreciation';
+  const tableName = 'appreciation_table';
   const completedPromise = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }
 
 async function getPrevTasks(mainId){
-  const tableName = 'task';
+  const tableName = 'task_table';
   const completedPromise  = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }

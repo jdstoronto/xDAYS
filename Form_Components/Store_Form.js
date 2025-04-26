@@ -102,15 +102,49 @@ function handleMaxEntries(){
 
 function getPrevByStatus(tx, tableName, status, amount){
     // First query for not completed appreciations
+
     let found = []
+    const orderBy = status == `Completed` ? `viewed_completed` : `viewed_incompleted`
     const listpromise = new Promise((resolveQuery, rejectQuery) => {
       tx.executeSql(
-        `SELECT * FROM ${tableName} WHERE status = ? ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT * FROM ${tableName} WHERE status = ? ORDER BY ${orderBy} LIMIT ?`,
         [status, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
             for (let i = 0; i < results.rows.length; i++) {
-              found.push(results.rows.item(i));
+              let item = results.rows.item(i);
+              found.push(item);
+              //console.log(`${tableName}: for id:${item.id} has been viewed:${item.viewed_incompleted} and viewed completed ${item.viewed_completed}`)
+              if(status == `Completed`){
+                //console.log(`${tableName}: add to ${orderBy} ${status} for id:${item.id}`)
+                tx.executeSql(
+                  `UPDATE ${tableName}
+                   SET viewed_completed = viewed_completed + 1 
+                   WHERE id = ?`,
+                  [item.id],
+                  () => {
+                    //console.log(`${tableName}: Incremented viewed_completed for id ${item.id}`);
+                  },
+                  (tx, error) => {
+                    console.error(`Error updating id ${item.id}:`, error);
+                  }
+                );
+              }
+              else{
+                //console.log(`${tableName}: add to ${orderBy} ${status} for id:${item.id}`)
+                tx.executeSql(
+                  `UPDATE ${tableName}
+                   SET viewed_incompleted = viewed_incompleted + 1 
+                   WHERE id = ?`,
+                  [item.id],
+                  () => {
+                    //console.log(`${tableName}: Incremented viewed_incompleted for id ${item.id}`);
+                  },
+                  (tx, error) => {
+                    console.error(`Error updating id ${item.id}:`, error);
+                  }
+                );
+              }
             }
             //console.log(`Found ${status}: ${found}`);
           } else {

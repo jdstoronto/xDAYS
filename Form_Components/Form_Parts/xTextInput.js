@@ -38,7 +38,7 @@ const XTextInput = (props) => {
 
   useEffect(() => {
     setShowDropdown(props.itemList != null && props.itemList.length > 0 && !selected);
-    console.log(props.itemList)
+    //console.log(props.itemList)
   }, [props.itemList]);
 
   //console.log(showDropdown)

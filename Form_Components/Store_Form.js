@@ -230,7 +230,7 @@ function getList(type, tableName, input){
               }
             }
           } else {
-            console.log(`Found nothing`);
+            //console.log(`Found nothing`);
           }
           //console.log(found)
           resolve(found); // Resolve this query's promise

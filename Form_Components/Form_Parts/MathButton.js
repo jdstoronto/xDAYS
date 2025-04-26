@@ -41,13 +41,13 @@ const styles = StyleSheet.create({
 
   async function listChange(type, value){
     let prevList = [];
-    console.log(type)
+    //console.log(type)
     try {
       prevList = await getList(type, `entries`, value+ '%');
       updatedItems.names = prevList;
       //setNames(nameList)
     } catch (error) {
-      console.log('failed to find other previous items with ' + value);
+      //console.log('failed to find other previous items with ' + value);
     }
     return prevList;
   }

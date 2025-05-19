@@ -43,12 +43,31 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
+const getxCurrentDate = () => {
+  const today = new Date();
+  const date = today.getDate()
+  const hours = today.getHours();
+
+  let xDay = new Date(today);
+
+  //If Before 9am the previous day will be logged
+  if (hours < 9){
+    xDay.setDate(date-1);
+  }
+
+  const year = xDay.getFullYear().toString().slice(-2); // Get the last two digits of the year
+  const month = (xDay.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+  const day = xDay.getDate().toString().padStart(2, '0'); // Add leading zero if needed
+
+  return `${year}-${month}-${day}`;
+};
+
 function App(): React.JSX.Element {
 
   const [previousDays, setPreviousDays] = useState([]);
 
   const isDarkMode = useColorScheme() === 'dark';
-  const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
+  const [currentDate, setCurrentDate] = useState<string>(getxCurrentDate());
 
   const [refresh, setRefresh] = useState(false);
   const [update, setUpdate] = useState(false);

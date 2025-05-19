@@ -2,6 +2,7 @@
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
+import {getList} from "./Store_Form"
 
 const styles = StyleSheet.create({
   highlight: {
@@ -66,6 +67,21 @@ function propertyChange(previous, index, name, value){
   return updatedItems;  // Return the updated array
 }
 
+async function listChange(previous, index, name, value){
+  let nameList = [];
+  const updatedItems = previous;
+  updatedItems[index][name] = value;
+  updatedItems[index].updateTime = Date.now();
+  try {
+    nameList = await getList(`name`, `appreciation_table`, value+ '%');
+    updatedItems[index].names = nameList;
+    //setNames(nameList)
+  } catch (error) {
+    console.log('failed to find other names with ' + value)
+  }
+  return updatedItems;
+}
+
 function ChecksThanks(props) {
 
   const [showPrevious, setShowPrevious] = useState(false);
@@ -82,10 +98,17 @@ function ChecksThanks(props) {
     });
   };
 
-  const handlePropertyChange = (index, name, value) => {
+  const handlePropertyChange = async (index, name, value) => {
+    if(name == `name` && value != null){
+      const updatedItems = await listChange([...props.value], index, name, value);
+      props.setValue(updatedItems);
+      return;
+    }
+    else{
     props.setValue((prevItems) => {
       return propertyChange([...prevItems], index, name, value);  // Return the updated array
     });
+    }
   };
 
   const handleShowPrevious = () => {
@@ -99,6 +122,7 @@ function ChecksThanks(props) {
         status:'',
         thanks:'',
         name:'',
+        names:[],
       };
       tasks.push(element)
     }
@@ -126,6 +150,7 @@ function ChecksThanks(props) {
           description={value.name}
           setDescription={text => handlePropertyChange(index,'name',text)}
           placeholder = {`Name`}
+          itemList = {value.names}
           />
       <XTextInput
           height = {40}

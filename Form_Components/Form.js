@@ -145,6 +145,9 @@ function XForm(props) {
     storeForm(entry);
     setSubmit(true);
     saveFile(`x${props.date}`, getFormated())
+    clearData();
+    fetchData();
+    //Need to pass set refresh to props to be able to handle refresh useEffect
     //Alert.alert('Form Submitted', getFormated());
     
   };

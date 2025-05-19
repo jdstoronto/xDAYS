@@ -4,6 +4,7 @@ import { Alert} from 'react-native';
 const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
 
 function formatThanks(tx,mainId,newArray, prevArray){
+  const tableName = 'appreciation_table';
   tx.executeSql(`CREATE TABLE IF NOT EXISTS appreciation_table (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     main_table_id INTEGER,
@@ -33,7 +34,7 @@ function formatThanks(tx,mainId,newArray, prevArray){
         //console.log('Error creating table:', error);
       }
     ); 
-    updateStatus(tx,'appreciation', prevArray)
+    updateStatus(tx, tableName, prevArray)
 }
 
 function formatTasks(tx,mainId,newArray,prevArray,futureArray){
@@ -447,7 +448,7 @@ function storeForm(entry){
                 entry.explore.whynot
               ],
               (tx, results) => {
-                //console.log('Form entry added');
+                console.log('Form entry added');
                 const mainId = results.insertId;
                 formatThanks(tx,mainId,entry.appreciations,entry.previousAppreciations);
                 formatTasks(tx,mainId,entry.tasks,entry.previousTasks,entry.futureTasks);

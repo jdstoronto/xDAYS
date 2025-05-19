@@ -37,8 +37,8 @@ function formatThanks(tx,mainId,newArray, prevArray){
 }
 
 function formatTasks(tx,mainId,newArray,prevArray,futureArray){
-  const tableName = 'task';
-  tx.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName}_table (
+  const tableName = 'task_table';
+  tx.executeSql(`CREATE TABLE IF NOT EXISTS ${tableName} (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     main_table_id INTEGER,
     status TEXT,
@@ -53,7 +53,7 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
       newArray.filter(item => item.task != "").forEach(item => {
         //console.log(`Processing ${item}`);
         tx.executeSql(
-          `INSERT INTO ${tableName}_table (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
+          `INSERT INTO ${tableName} (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
           [mainId, item.status, item.task, item.updateTime],
           (tx, results) => {
             //console.log(`Added Thanks from ${item.task}`);
@@ -73,11 +73,11 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
 }
 
 function updateThanks(tx,prevArray){
-  updateStatus(tx,'appreciation', prevArray)
+  updateStatus(tx,'appreciation_table', prevArray)
 }
 
 function updateTasks(tx,prevArray,futureArray){
-  const tableName = 'task';
+  const tableName = 'task_table';
   updateStatus(tx,tableName, prevArray)
   updateStatus(tx,tableName, futureArray)
 }
@@ -85,7 +85,7 @@ function updateTasks(tx,prevArray,futureArray){
 function updateStatus(tx,tableName, array){
   array.forEach(item => {
     tx.executeSql(
-      `UPDATE ${tableName}_table SET status = ? WHERE id == ?`,
+      `UPDATE ${tableName} SET status = ? WHERE id == ?`,
       [item.status, item.id],
       ()=>{ 
         //console.log(`updating ${tableName} for id ${item.id} to status ${item.status}`)
@@ -98,20 +98,53 @@ function updateStatus(tx,tableName, array){
 }
 
 function handleMaxEntries(){
-
 }
 
 function getPrevByStatus(tx, tableName, status, amount){
     // First query for not completed appreciations
+
     let found = []
+    const orderBy = status == `Completed` ? `viewed_completed` : `viewed_incompleted`
     const listpromise = new Promise((resolveQuery, rejectQuery) => {
       tx.executeSql(
-        `SELECT * FROM ${tableName}_table WHERE status = ? ORDER BY updateTime DESC LIMIT ?`,
+        `SELECT * FROM ${tableName} WHERE status = ? ORDER BY ${orderBy} LIMIT ?`,
         [status, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
             for (let i = 0; i < results.rows.length; i++) {
-              found.push(results.rows.item(i));
+              let item = results.rows.item(i);
+              found.push(item);
+              //console.log(`${tableName}: for id:${item.id} has been viewed:${item.viewed_incompleted} and viewed completed ${item.viewed_completed}`)
+              if(status == `Completed`){
+                //console.log(`${tableName}: add to ${orderBy} ${status} for id:${item.id}`)
+                tx.executeSql(
+                  `UPDATE ${tableName}
+                   SET viewed_completed = viewed_completed + 1 
+                   WHERE id = ?`,
+                  [item.id],
+                  () => {
+                    //console.log(`${tableName}: Incremented viewed_completed for id ${item.id}`);
+                  },
+                  (tx, error) => {
+                    console.error(`Error updating id ${item.id}:`, error);
+                  }
+                );
+              }
+              else{
+                //console.log(`${tableName}: add to ${orderBy} ${status} for id:${item.id}`)
+                tx.executeSql(
+                  `UPDATE ${tableName}
+                   SET viewed_incompleted = viewed_incompleted + 1 
+                   WHERE id = ?`,
+                  [item.id],
+                  () => {
+                    //console.log(`${tableName}: Incremented viewed_incompleted for id ${item.id}`);
+                  },
+                  (tx, error) => {
+                    console.error(`Error updating id ${item.id}:`, error);
+                  }
+                );
+              }
             }
             //console.log(`Found ${status}: ${found}`);
           } else {
@@ -135,7 +168,7 @@ function getPrevByMainId(tableName, mainId){
   const listpromise = new Promise((resolveQuery, rejectQuery) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM ${tableName}_table WHERE main_table_id = ? ORDER BY updateTime DESC`,
+        `SELECT * FROM ${tableName} WHERE main_table_id = ? ORDER BY updateTime DESC`,
         [mainId],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -160,7 +193,7 @@ return listpromise;
 }
 
 function getThanks(notCompletedAmount, completedAmount) {
-  const tableName = 'appreciation';
+  const tableName = 'appreciation_table';
   return new Promise((resolve, reject) => {
 
     //console.log(`Looking for Old ${tableName}s`);
@@ -186,7 +219,7 @@ function getThanks(notCompletedAmount, completedAmount) {
 }
 
 function getTasks(notCompletedAmount, completedAmount, futureAmount) {
-  const tableName = 'task';
+  const tableName = 'task_table';
   return new Promise((resolve, reject) => {
 
     //console.log(`Looking for Old ${tableName}s`);
@@ -212,6 +245,37 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
         });
     });
   });
+}
+
+function getList(type, tableName, input){
+  const amount = 3;
+  let found = [] ;
+  return new Promise((resolve, reject) => {
+    db.transaction( tx =>
+      tx.executeSql(
+        `SELECT ${type} FROM ${tableName} WHERE ${type} LIKE ? COLLATE NOCASE ORDER BY id DESC LIMIT ?`,
+        [input, amount],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            for (let i = 0; i < results.rows.length; i++) {
+              const foundItem = results.rows.item(i)[type];
+              if (!found.includes(foundItem)) {
+                found.push(foundItem);
+              }
+            }
+          } else {
+            //console.log(`Found nothing`);
+          }
+          //console.log(found)
+          resolve(found); // Resolve this query's promise
+        },
+        error => {
+          console.log('Error executing not completed query', error);
+          reject(error); // Reject this query's promise on error
+        }
+      )
+    );
+  })
 }
 
 function createDateFromString(dateString){
@@ -287,13 +351,13 @@ function getPrevDays(currentDate, numDaysPrevious) {
 }
 
 async function getPrevThanks(mainId){
-  const tableName = 'appreciation';
+  const tableName = 'appreciation_table';
   const completedPromise = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }
 
 async function getPrevTasks(mainId){
-  const tableName = 'task';
+  const tableName = 'task_table';
   const completedPromise  = await getPrevByMainId(tableName, mainId);
   return completedPromise 
 }
@@ -419,4 +483,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList};

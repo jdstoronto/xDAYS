@@ -238,6 +238,7 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
       // Wait for both queries to complete before resolving the main promise
       Promise.all([notCompletedPromise, completedPromise, futurePromise])
         .then((value) => {
+          console.log(value[0])
           const tasksfound = value[0].concat(value[1]);
           resolve([tasksfound, value[2]]);  // Resolve the main promise after both queries are done
         })

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { getTasks, getPrevDays } from '../Form_Components/Store_Form';
 
@@ -80,17 +80,23 @@ function formatTasksNotification(tasks){
 function NotifyDay({date, prevDays, setPrevDays}){
   const [tasks, setTasks] = useState([])
 
+  const hasScheduledTasks = useRef(false);
+  const hasScheduledPrevDay = useRef(false);
+
+  console.log(`DEBUG: Running Notify Day`)
+
+
   async function fetchData(){
     try {
-      console.log(`DEBUG: Running Notifications`)
+      PushNotification.cancelAllLocalNotifications();
+      createNotificationChannel();
+      console.log(`DEBUG: Running async`)
+      //Deleting all previous setted notifications
       const [importedTasks, _ ] = await getTasks(3,0,0);
       const importedPrevDays = await getPrevDays(date, 4);
-      //console.log(`Prev Days Imported ${importedPrevDays}`)
       setPrevDays(importedPrevDays);
-      isArray = Array.isArray(importedTasks);
-      //console.log(`This returned ${isArray ? 'Array':'Not an Array'} ${importedTasks}`);
       setTasks(importedTasks);
-      PushNotification.cancelAllLocalNotifications();//Deleting all previous setted notifications
+      
     }
     catch(error){
       console.error('Could Not Find Fetch Data, Error:', error);
@@ -109,26 +115,26 @@ function NotifyDay({date, prevDays, setPrevDays}){
     
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
     //console.log(`Found the following length ${tasks.length}`);
-    if (tasks.length != 0) {
+    if (tasks.length != 0 && !hasScheduledTasks.current) {
       const taskNotification = formatTasksNotification(tasks);
       //console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
-      createNotificationChannel();
       //sendNotification('xDAYS - Tasks Reminder', taskNotification);
       sendTimedNotification('xDAYS - Tasks Reminder A', taskNotification, timeUntil2_30PM );
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
-      console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
+      console.log(`DEBUG: Sent ${tasks.length} Tasks Background Scheduled Notification for ${taskTimer}`);
       /*BackgroundTimer.setTimeout(async () => {
         sendNotification('xDAYS - Tasks Reminder B', taskNotification);
       }, taskTimer);
       */
+      hasScheduledTasks.current = true;
     }
   },[tasks])
 
   useEffect(()=>{
-    if (prevDays.length != 0){
-      const [hours, min] = [21, 11];
+    if (prevDays.length != 0 && !hasScheduledPrevDay.current){
+      const [hours, min] = [21, 48];
 
       const nightTimer = calculateCountdownUntilTarget(hours, min);
       
@@ -141,6 +147,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
       BackgroundTimer.setTimeout(async () => {
         sendNotification('xDAYS - Journal Reminder', dayNotification);
       }, nightTimer);
+      hasScheduledPrevDay.current = true;
     }
 
   },[prevDays])

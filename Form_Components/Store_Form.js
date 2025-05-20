@@ -312,6 +312,7 @@ function getPrevDays(currentDate, numDaysPrevious) {
         tx.executeSql(
           `SELECT * FROM entries 
             WHERE date !=?
+            ORDER BY id DESC
             LIMIT ${numDaysPrevious}`,
           [currentDate],
           (tx, results) => {
@@ -320,6 +321,7 @@ function getPrevDays(currentDate, numDaysPrevious) {
                 const entry = results.rows.item(i);
                 const mainId = entry.id;
                 entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
+                console.log(entry.date)
                 entries.push(entry)
               }
               resolve(entries);      // Resolve with the full array of entries

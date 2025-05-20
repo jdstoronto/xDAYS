@@ -14,6 +14,7 @@ const sendTimedNotification = (title, message, time) => {
     message: message,
     date: time,  // The time when the notification should fire
     allowWhileIdle: true,  // Ensure the notification fires even if the device is idle
+    smallIcon: "ic_notifications",
   });
 };
 
@@ -22,6 +23,7 @@ const sendNotification = (title, message) => {
     channelId: "xdays-channel", // Pass the channel ID when sending the notification
     title: title,
     message: message,
+    smallIcon: "ic_notifications",
   });
 };
 
@@ -34,7 +36,7 @@ const createNotificationChannel = () => {
       importance: 3, // High importance
       vibrate: true, // Enable vibration
     },
-    (created) => console.log(`createChannel returned '${created}'`) // Log the result
+    (created) => console.log(`DEBUG: createChannel returned '${created}'`) // Log the result
   );
 };
 
@@ -80,6 +82,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
 
   async function fetchData(){
     try {
+      console.log(`DEBUG: Running Notifications`)
       const [importedTasks, _ ] = await getTasks(3,0,0);
       const importedPrevDays = await getPrevDays(date, 4);
       //console.log(`Prev Days Imported ${importedPrevDays}`)
@@ -101,7 +104,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
   
 
   useEffect(() => {
-    const [hours, min] = [12, 30];
+    const [hours, min] = [12,30];
     
     
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
@@ -115,28 +118,31 @@ function NotifyDay({date, prevDays, setPrevDays}){
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
-      //console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
-      BackgroundTimer.setTimeout(async () => {
+      console.log(`Sent Background Scheduled Notification for ${taskTimer}`);
+      /*BackgroundTimer.setTimeout(async () => {
         sendNotification('xDAYS - Tasks Reminder B', taskNotification);
       }, taskTimer);
+      */
     }
   },[tasks])
 
   useEffect(()=>{
     if (prevDays.length != 0){
-      const [hours, min] = [21, 30];
+      const [hours, min] = [21, 11];
 
       const nightTimer = calculateCountdownUntilTarget(hours, min);
       
       prevDay = prevDays[0];
 
-      //console.log(`DEBUG: Have Previous days ${prevDay.prevDayCount} ago Sent Background Scheduled Notification for ${nightTimer}`)
+      console.log(`DEBUG: Have Previous ${prevDay.prevDayCount} days ago Sent Background Scheduled Notification for ${nightTimer}`)
 
       const dayNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
+      
       BackgroundTimer.setTimeout(async () => {
         sendNotification('xDAYS - Journal Reminder', dayNotification);
       }, nightTimer);
     }
+
   },[prevDays])
 
   return null;

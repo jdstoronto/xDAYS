@@ -5,13 +5,12 @@ import React from 'react';
 const styles = StyleSheet.create({
     Title: {
         fontStyle: '',
-        fontWeight: 'bold',
         color: '#fff',
         flexDirection: 'row',
         marginTop: 2,
         marginBottom: 2,
-        fontFamily:"monospace",
-        fontSize: 15,
+        fontFamily: 'perfect_dos',
+        fontSize: 18,
     }
   });
 

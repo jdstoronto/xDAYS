@@ -20,7 +20,7 @@ function Describe(props)  {
         title ={props.title}
         description={props.description}
         setDescription={props.setDescription}
-        placeholder = {`How was your ${props.title}`}
+        placeholder = {props.placeholder ? props.placeholder : `How was your ${props.title}`}
         />
       </View>
     )

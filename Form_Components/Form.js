@@ -183,10 +183,18 @@ function XForm(props) {
     }
   }, [props.update])
 
+  let dayPlaceholder = 'How was the day been?';
+  if (props.prevDays && props.prevDays.length > 0) {
+    const diff = props.prevDays[0].prevDayCount;
+    if (diff > 1) {
+      dayPlaceholder = `How has the last ${diff} days been?`;
+    }
+  }
+
   return (
     <View style ={styles.container}>
-      
-      <Describe title='Day' description={day} setDescription={setDay} height={130}/>
+
+      <Describe title='Day' description={day} setDescription={setDay} height={130} placeholder={dayPlaceholder}/>
       <Describe title='Health' description={heal} setDescription={setHeal} height={90}/>
       <ChecksThanks 
         title='Appreciations' count={3}

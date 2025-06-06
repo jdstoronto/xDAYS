@@ -103,7 +103,7 @@ function setFormated(entry){
     formatThanks(entry.appreciations,entry.previousAppreciations)
     formatTasks(entry.tasks,entry.previousTasks,entry.futureTasks)
     formatMath(entry.lifeMath,  entry.selectedMath)
-    formatExplore(entry.explore, entry.selected_math)
+    formatExplore(entry.explore, entry.selectedMath)
 }
 
 export {setFormated, getFormated};

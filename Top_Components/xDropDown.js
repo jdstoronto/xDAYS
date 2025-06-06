@@ -12,6 +12,7 @@ import {
         <XDropDownItem name = 'Update' onPress = {handleUpdate}/>
         <XDropDownItem name = 'Clear' onPress = {handleClear}/>
         <XDropDownItem name = 'Refresh' onPress = {handleRefresh}/>
+        <XDropDownItem name = 'Settings'/>
       </View>
     );
   };
@@ -31,7 +32,6 @@ import {
     dropContainer: {
       margin: 5,
       color: 'white',
-      fontFamily: 'digi',
       justifyContent: 'center',
       alignItems: 'center',
       borderColor:'white',
@@ -39,8 +39,8 @@ import {
     },
     dropText:{
       color: 'white',
-      fontFamily: 'ds-digi',
-      fontSize: 20,
+      fontFamily: 'perfect_dos',
+      fontSize: 18,
       padding: 10,
       paddingHorizontal: 20,
     }

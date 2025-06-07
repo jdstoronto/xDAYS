@@ -117,17 +117,12 @@ function NotifyDay({date, prevDays, setPrevDays}){
     //console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0 && !hasScheduledTasks.current) {
       const dayTaskNotification = formatTasksNotification(tasks);
-      //console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
-      //sendNotification('xDAYS - Tasks Reminder', dayTaskNotification);
       sendTimedNotification('xDAYS - Day Tasks Reminder', dayTaskNotification, timeUntil2_30PM );
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
       console.log(`DEBUG: Sent ${tasks.length} Tasks Background Scheduled Notification for ${taskTimer}`);
-      /*BackgroundTimer.setTimeout(async () => {
-          sendNotification('xDAYS - Tasks Reminder B', dayTaskNotification);
-      }, taskTimer);
-      */
+
       hasScheduledTasks.current = true;
     }
   },[tasks])

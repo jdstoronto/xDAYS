@@ -238,6 +238,7 @@ function getTasks(notCompletedAmount, completedAmount, futureAmount) {
       // Wait for both queries to complete before resolving the main promise
       Promise.all([notCompletedPromise, completedPromise, futurePromise])
         .then((value) => {
+          console.log(value[0])
           const tasksfound = value[0].concat(value[1]);
           resolve([tasksfound, value[2]]);  // Resolve the main promise after both queries are done
         })
@@ -312,6 +313,7 @@ function getPrevDays(currentDate, numDaysPrevious) {
         tx.executeSql(
           `SELECT * FROM entries 
             WHERE date !=?
+            ORDER BY id DESC
             LIMIT ${numDaysPrevious}`,
           [currentDate],
           (tx, results) => {
@@ -320,6 +322,7 @@ function getPrevDays(currentDate, numDaysPrevious) {
                 const entry = results.rows.item(i);
                 const mainId = entry.id;
                 entry.prevDayCount = getPrevDayCount(currentDate, entry.date);
+                console.log(entry.date)
                 entries.push(entry)
               }
               resolve(entries);      // Resolve with the full array of entries

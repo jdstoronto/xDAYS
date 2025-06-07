@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     },
     Title: {
         flexDirection: 'row',
+        fontFamily: 'perfect_dos',
     }
   });
 

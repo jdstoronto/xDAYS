@@ -116,16 +116,16 @@ function NotifyDay({date, prevDays, setPrevDays}){
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
     //console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0 && !hasScheduledTasks.current) {
-      const taskNotification = formatTasksNotification(tasks);
+      const dayTaskNotification = formatTasksNotification(tasks);
       //console.log(`Sent Scheduled Notification for ${timeUntil2_30PM}`);
-      //sendNotification('xDAYS - Tasks Reminder', taskNotification);
-      sendTimedNotification('xDAYS - Tasks Reminder A', taskNotification, timeUntil2_30PM );
+      //sendNotification('xDAYS - Tasks Reminder', dayTaskNotification);
+      sendTimedNotification('xDAYS - Day Tasks Reminder', dayTaskNotification, timeUntil2_30PM );
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
       console.log(`DEBUG: Sent ${tasks.length} Tasks Background Scheduled Notification for ${taskTimer}`);
       /*BackgroundTimer.setTimeout(async () => {
-        sendNotification('xDAYS - Tasks Reminder B', taskNotification);
+          sendNotification('xDAYS - Tasks Reminder B', dayTaskNotification);
       }, taskTimer);
       */
       hasScheduledTasks.current = true;
@@ -137,16 +137,15 @@ function NotifyDay({date, prevDays, setPrevDays}){
       const [hours, min] = [21, 48];
 
       const nightTimer = calculateCountdownUntilTarget(hours, min);
-      
+      const nightTime = calculateTimeUntilTarget(hours, min);
+
       prevDay = prevDays[0];
 
       console.log(`DEBUG: Have Previous ${prevDay.prevDayCount} days ago Sent Background Scheduled Notification for ${nightTimer}`)
 
-      const dayNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
-      
-      BackgroundTimer.setTimeout(async () => {
-        sendNotification('xDAYS - Journal Reminder', dayNotification);
-      }, nightTimer);
+      const nightNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
+
+      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTime);
       hasScheduledPrevDay.current = true;
     }
 

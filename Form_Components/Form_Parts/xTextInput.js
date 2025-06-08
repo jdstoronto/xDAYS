@@ -1,4 +1,4 @@
-import { TextInput, View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { TextInput, View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 
 const styles = StyleSheet.create({
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     zIndex: 4,
     width: '100%',
+    maxHeight: 150,
   },
   dropdownItem: {
     padding: 10,
@@ -60,28 +61,25 @@ const XTextInput = (props) => {
 
       {showDropdown && (
         <View style={styles.dropdown}>
-          <FlatList
-            data={props.itemList}
-            keyExtractor={(item, index) => {
-              const value = typeof item === 'string' ? item : item.value;
-              return `${value}-${index}`;
-            }}
-            renderItem={({ item }) => {
-              const value = typeof item === 'string' ? item : item.value;
-              const count = typeof item === 'object' && item.count != null ? ` (${item.count})` : '';
-              return (
-                <TouchableOpacity
-                  style={styles.dropdownItem}
-                  onPress={() => {
-                    props.setDescription(value);
-                    setSelected(true);
-                  }}
-                >
+          <ScrollView>
+            {props.itemList.map((item, index) => {
+                const value = typeof item === 'string' ? item : item.value;
+                const count = typeof item === 'object' && item.count != null ? ` (${item.count})` : '';
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      props.setDescription(value);
+                      setSelected(true);
+                    }}
+                  >
                   <Text style={styles.dropdownText}>{`${value}${count}`}</Text>
-                </TouchableOpacity>
+                  </TouchableOpacity>
               );
-            }}
-          />
+            })
+            }
+          </ScrollView>
         </View>
       )}
     </View>

@@ -6,13 +6,13 @@ import {
     TouchableOpacity
   } from 'react-native';
 
-  const XDropDown = ({handleClear, handleRefresh, handleUpdate}) => {
+  const XDropDown = ({handleClear, handleRefresh, handleUpdate, handleSettings}) => {
     return (
       <View style={{zIndex:2, position:'absolute', top:50, backgroundColor:'black'}}>
         <XDropDownItem name = 'Update' onPress = {handleUpdate}/>
         <XDropDownItem name = 'Clear' onPress = {handleClear}/>
         <XDropDownItem name = 'Refresh' onPress = {handleRefresh}/>
-        <XDropDownItem name = 'Settings'/>
+        <XDropDownItem name = 'Settings' onPress = {handleSettings}/>
       </View>
     );
   };

@@ -2,7 +2,7 @@
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
-import {getList} from "./Store_Form"
+import {getList} from "../Storage_Components/Store_Form"
 
 const styles = StyleSheet.create({
   highlight: {

@@ -62,18 +62,25 @@ const XTextInput = (props) => {
         <View style={styles.dropdown}>
           <FlatList
             data={props.itemList}
-            keyExtractor={(item, index) => `${item}-${index}`}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.dropdownItem}
-                onPress={() => {
-                  props.setDescription(item);
-                  setSelected(true);
-                }}
-              >
-                <Text style={styles.dropdownText}>{item}</Text>
-              </TouchableOpacity>
-            )}
+            keyExtractor={(item, index) => {
+              const value = typeof item === 'string' ? item : item.value;
+              return `${value}-${index}`;
+            }}
+            renderItem={({ item }) => {
+              const value = typeof item === 'string' ? item : item.value;
+              const count = typeof item === 'object' && item.count != null ? ` (${item.count})` : '';
+              return (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    props.setDescription(value);
+                    setSelected(true);
+                  }}
+                >
+                  <Text style={styles.dropdownText}>{`${value}${count}`}</Text>
+                </TouchableOpacity>
+              );
+            }}
           />
         </View>
       )}

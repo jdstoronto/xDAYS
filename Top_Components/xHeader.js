@@ -35,7 +35,9 @@ import {
         {showDropDown && <XDropDown  
         handleClear = {handleClear}
         handleRefresh = {handleRefresh}
-        handleUpdate = {handleUpdate}/>}
+        handleUpdate = {handleUpdate}
+        closeMenu={() => setShowDropDown(false)}/>
+        }
       </View>
     );
   };

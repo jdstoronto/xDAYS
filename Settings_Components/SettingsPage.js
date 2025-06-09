@@ -70,10 +70,10 @@ const SettingsPage = ({ onClose, taskTime, nightTime, onUpdateTaskTime, onUpdate
         </View>
       </View>
 
-      <View style={styles.bottomContainer}>
-        <Text style={styles.bottomText}>Settings Page</Text>
+      <View style={styles.section}>
+        <Text style={styles.bottomText}>Database</Text>
         <TouchableOpacity onPress={exportDatabase} style={styles.saveButton}>
-          <Text style={styles.saveText}>Download Database</Text>
+          <Text style={styles.saveText}>Download </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    justifyContent: 'space-between',
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     fontFamily: 'perfect_dos',
   },
   saveButton: {
-    marginLeft: 10,
+    margin: 10,
     borderWidth: 1,
     borderColor: 'white',
     paddingHorizontal: 10,
@@ -139,11 +138,13 @@ const styles = StyleSheet.create({
   saveText: {
     color: 'white',
     fontFamily: 'perfect_dos',
+    padding: 5,
   },
   bottomText: {
     color: 'white',
     fontSize: 18,
     fontFamily: 'perfect_dos',
+    margin:4,
   },
 });
 

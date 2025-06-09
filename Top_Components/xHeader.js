@@ -51,11 +51,10 @@ import {
       height: 50,
     },
     centeredText: {
-      fontSize: 18,
+      fontSize: 23,
       color: '#fff',
       textAlign: 'center',
-      fontWeight: 'bold',
-      fontFamily: 'monospace',
+      fontFamily: 'perfect_dos',
     },
     imageContainer:{
       position: 'absolute',

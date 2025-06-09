@@ -122,7 +122,8 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <XForm date = {currentDate} 
+          <XForm date = {currentDate}
+            prevDays = {previousDays}
             clear = {clear} resetClear = {resetClear}
             refresh = {refresh} resetRefresh = {resetRefresh}
             update = {update} resetUpdate = {resetUpdate}/>

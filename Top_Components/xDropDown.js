@@ -20,6 +20,7 @@ import {
         <XDropDownItem name = 'Update' onPress = {wrapPress(handleUpdate)}/>
         <XDropDownItem name = 'Clear' onPress = {wrapPress(handleClear)}/>
         <XDropDownItem name = 'Refresh' onPress = {wrapPress(handleRefresh)}/>
+        <XDropDownItem name = 'Settings'/>
       </View>
     );
   };
@@ -39,7 +40,6 @@ import {
     dropContainer: {
       margin: 5,
       color: 'white',
-      fontFamily: 'digi',
       justifyContent: 'center',
       alignItems: 'center',
       borderColor:'white',
@@ -47,8 +47,8 @@ import {
     },
     dropText:{
       color: 'white',
-      fontFamily: 'ds-digi',
-      fontSize: 20,
+      fontFamily: 'perfect_dos',
+      fontSize: 18,
       padding: 10,
       paddingHorizontal: 20,
     }

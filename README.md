@@ -77,3 +77,19 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+## Word Frequency 3‑D Chart
+
+This project includes an optional visualization that shows the frequency of each
+entered math word as floating 3‑D blocks. The chart uses the
+`react-native-threejs` and `three` libraries. Install dependencies and run the
+app as usual:
+
+```bash
+npm install
+```
+
+To open the chart, use the **Word Chart** option in the top drop‑down menu. A
+scene will appear with blocks sized according to the number of times each word
+has been used in previous entries.
+

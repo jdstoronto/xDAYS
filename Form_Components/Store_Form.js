@@ -280,6 +280,33 @@ function getList(type, tableName, input){
   })
 }
 
+function getMathWordCounts(){
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT mathAdd, mathSubtract, mathMultiply, mathDivide FROM entries',
+        [],
+        (tx, results) => {
+          const counts = {};
+          for (let i = 0; i < results.rows.length; i++) {
+            const row = results.rows.item(i);
+            ['mathAdd','mathSubtract','mathMultiply','mathDivide'].forEach(col => {
+              const word = row[col];
+              if (word && word.trim() !== '') {
+                counts[word] = (counts[word] || 0) + 1;
+              }
+            });
+          }
+          resolve(counts);
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  });
+}
+
 function createDateFromString(dateString){
   // Split the string into day, month, year parts
   const [year, month, day] = dateString.split('-');
@@ -487,4 +514,4 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList, getMathWordCounts};

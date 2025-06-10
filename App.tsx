@@ -15,6 +15,8 @@ import {
   StyleSheet,
   useColorScheme,
   View,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -24,6 +26,8 @@ import {
 import XHeader from './Top_Components/xHeader';
 import XForm from './Form_Components/Form';
 import NotifyDay from './Notify_Components/Notify';
+import WordFreq3DChart from './Top_Components/WordFreq3DChart';
+import { getMathWordCounts } from './Form_Components/Store_Form';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -72,6 +76,8 @@ function App(): React.JSX.Element {
   const [refresh, setRefresh] = useState(false);
   const [update, setUpdate] = useState(false);
   const [clear, setClear] = useState(false);
+  const [showChart, setShowChart] = useState(false);
+  const [wordCounts, setWordCounts] = useState({});
 
   const handleRefresh = () => {
     setRefresh(true);  // Trigger refresh
@@ -93,6 +99,20 @@ function App(): React.JSX.Element {
     setClear(true);  // Trigger Clear
   };
 
+  const handleChart = async () => {
+    try {
+      const counts = await getMathWordCounts();
+      setWordCounts(counts);
+      setShowChart(true);
+    } catch (e) {
+      console.error('Error getting word counts', e);
+    }
+  };
+
+  const closeChart = () => {
+    setShowChart(false);
+  };
+
   const resetClear = () => {
     setClear(false);  // Trigger Clear
   };
@@ -103,7 +123,7 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <NotifyDay 
+      <NotifyDay
         prevDays={previousDays}
         setPrevDays={setPreviousDays}
         date = {currentDate} />
@@ -114,20 +134,34 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <XHeader date = {currentDate} 
+        <XHeader date = {currentDate}
         handleClear = {handleClear}
         handleRefresh = {handleRefresh}
-        handleUpdate = {handleUpdate}/>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <XForm date = {currentDate}
-            prevDays = {previousDays}
-            clear = {clear} resetClear = {resetClear}
-            refresh = {refresh} resetRefresh = {resetRefresh}
-            update = {update} resetUpdate = {resetUpdate}/>
-        </View>
+        handleUpdate = {handleUpdate}
+        handleChart = {handleChart}/>
+        {showChart ? (
+          <View style={{height:400}}>
+            <WordFreq3DChart wordCounts={wordCounts} />
+            <View style={{alignItems:'center', marginTop:10}}>
+              <TouchableOpacity onPress={closeChart} style={{padding:10, borderWidth:1}}>
+                <View>
+                  <Text style={{color:'white'}}>Close</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View
+            style={{
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            }}>
+            <XForm date = {currentDate}
+              prevDays = {previousDays}
+              clear = {clear} resetClear = {resetClear}
+              refresh = {refresh} resetRefresh = {resetRefresh}
+              update = {update} resetUpdate = {resetUpdate}/>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

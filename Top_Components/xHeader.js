@@ -14,7 +14,7 @@ import {
 
   import XDropDown from './xDropDown';
 
-  const XHeader = ({date, handleClear, handleRefresh, handleUpdate}) => {
+  const XHeader = ({date, handleClear, handleRefresh, handleUpdate, handleChart}) => {
     const [showDropDown, setShowDropDown] = useState(false)
 
     const toggleShowDropDown = () => {
@@ -32,10 +32,11 @@ import {
           </TouchableOpacity>
           <Text style={styles.centeredText}>{date}</Text>
         </View>
-        {showDropDown && <XDropDown  
+        {showDropDown && <XDropDown
         handleClear = {handleClear}
         handleRefresh = {handleRefresh}
-        handleUpdate = {handleUpdate}/>}
+        handleUpdate = {handleUpdate}
+        handleChart = {handleChart}/>}
       </View>
     );
   };

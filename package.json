@@ -18,7 +18,9 @@
     "react-native-document-picker": "^9.3.1",
     "react-native-fs": "^2.20.0",
     "react-native-push-notification": "^8.1.1",
-    "react-native-sqlite-storage": "^6.0.1"
+    "react-native-sqlite-storage": "^6.0.1",
+    "three": "^0.164.0",
+    "react-native-threejs": "^0.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,7 +1,8 @@
 
-import { TextInput, View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
+import {CheckBox, SubTitle, Title, XTextInput, XTextDisplay} from "./Form_Parts/FormParts_Index"
+import {softDeleteItem} from './Store_Form';
 
 const styles = StyleSheet.create({
   highlight: {
@@ -98,6 +99,12 @@ function ChecksTasks(props) {
     setShowPrevious(!showPrevious);
   };
 
+  const deleteTask = (id) => {
+    softDeleteItem('task_table', id);
+    props.updatePrevious(prev => prev.filter(item => item.id !== id));
+    props.updateFuture(prev => prev.filter(item => item.id !== id));
+  };
+
   const handleTask = (newValue, index) =>{
     props.setValue((prevItems) => {
       // Create a copy of the array
@@ -157,7 +164,12 @@ function ChecksTasks(props) {
           onChange={() =>handlePreviousCheckboxChange(index)}
           onHold={() => handlePreviousFuture(index)}
     />
-    <Text style={styles.inputed}>{value.task}</Text>
+    <XTextDisplay
+        height={25}
+        flex={1}
+        text={value.task}
+        onDelete={() => deleteTask(value.id)}
+    />
   </View>
     )))}
   <SubTitle title='Future' onClick = {handleShowPrevious}/>
@@ -169,7 +181,12 @@ function ChecksTasks(props) {
           onChange={() =>handleFutureCheckboxChange(index)}
           onHold={() => changeFuture(index)}
     />
-    <Text style={styles.inputed}>{value.task}</Text>
+    <XTextDisplay
+        height={25}
+        flex={1}
+        text={value.task}
+        onDelete={() => deleteTask(value.id)}
+    />
   </View>
     )))}
   </View>

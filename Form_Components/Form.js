@@ -210,7 +210,7 @@ function XForm(props) {
       {/* Probably should have made button touchable opacity */}
       <View style = {styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Process</Text>
+          <Text style={styles.buttonText}>PROGRESS</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     margin: 10,
     flex: 1,
     color: 'white',
-    fontFamily: 'ds-digi',
+    fontFamily: 'perfect_dos',
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 20,

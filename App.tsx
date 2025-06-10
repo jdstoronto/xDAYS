@@ -76,7 +76,7 @@ function App(): React.JSX.Element {
   const [clear, setClear] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [taskTime, setTaskTime] = useState({hour: 12, minute: 30});
-  const [nightTime, setNightTime] = useState({hour: 21, minute: 48});
+  const [nightTime, setNightTime] = useState({hour: 21, minute: 30});
 
   const handleRefresh = () => {
     setRefresh(true);  // Trigger refresh

@@ -129,10 +129,10 @@ function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
 
   useEffect(()=>{
     if (prevDays.length != 0 && !hasScheduledPrevDay.current){
+      
       const {hour: hours, minute: min} = nightTime;
 
-      const nightTimer = calculateCountdownUntilTarget(hours, min);
-      const nightTime = calculateTimeUntilTarget(hours, min);
+      const nightTimer = calculateTimeUntilTarget(hours, min);
 
       prevDay = prevDays[0];
 
@@ -140,7 +140,7 @@ function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
 
       const nightNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
 
-      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTime);
+      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTimer);
       hasScheduledPrevDay.current = true;
     }
 

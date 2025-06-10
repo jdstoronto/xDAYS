@@ -301,6 +301,32 @@ function getList(type, tableName, input){
   })
 }
 
+function getListWithCount(type, tableName, input){
+  const amount = 3;
+  const found = [];
+  return new Promise((resolve, reject) => {
+    db.transaction(tx =>
+      tx.executeSql(
+        `SELECT ${type} as value, COUNT(${type}) as count FROM ${tableName} WHERE ${type} LIKE ? COLLATE NOCASE GROUP BY ${type} ORDER BY count DESC LIMIT ?`,
+        [input, amount],
+        (tx, results) => {
+          if (results.rows.length > 0) {
+            for (let i = 0; i < results.rows.length; i++) {
+              const item = results.rows.item(i);
+              found.push({value: item.value, count: item.count});
+            }
+          }
+          resolve(found);
+        },
+        error => {
+          console.log('Error executing query', error);
+          reject(error);
+        }
+      )
+    );
+  })
+}
+
 function createDateFromString(dateString){
   // Split the string into day, month, year parts
   const [year, month, day] = dateString.split('-');
@@ -519,4 +545,4 @@ function softDeleteItem(tableName, id){
   });
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList, softDeleteItem};
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList, softDeleteItem, getListWithCount};

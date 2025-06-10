@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput, XTextDisplay} from "./Form_Parts/FormParts_Index"
 import {softDeleteItem} from './Store_Form';

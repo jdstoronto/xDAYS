@@ -1,13 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Alert, PanResponder } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
     flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: '#fff',
-    color: '#fff',
     textAlignVertical: 'center',
     padding: 10,
     fontFamily: 'courier',
@@ -20,10 +17,20 @@ const styles = StyleSheet.create({
 });
 
 const XTextDisplay = (props) => {
+  const [bgColor, setBgColor] = useState('transparent');
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dx) > 20,
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dx < -20) {
+          setBgColor('red');
+        } else {
+          setBgColor('transparent');
+        }
+      },
       onPanResponderRelease: (_, gestureState) => {
+        setBgColor('transparent');
         if (gestureState.dx < -50) {
           Alert.alert('Delete Item', 'Do you want to remove this item?', [
             { text: 'Cancel', style: 'cancel' },
@@ -36,7 +43,7 @@ const XTextDisplay = (props) => {
 
   return (
     <View
-      style={[styles.container, { height: props.height, width: props.width, flex: props.flex }]}
+      style={[styles.container, { height: props.height, width: props.width, flex: props.flex, backgroundColor: bgColor }]}
       {...panResponder.panHandlers}
     >
       <Text style={styles.text}>{props.text}</Text>
@@ -45,3 +52,4 @@ const XTextDisplay = (props) => {
 };
 
 export default XTextDisplay;
+

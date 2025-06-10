@@ -3,6 +3,25 @@ import { Alert} from 'react-native';
 
 const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
 
+// Ensure older databases gain the soft-delete column without dropping data
+// Will Most Likely only need to run once
+db.transaction(tx => {
+  tx.executeSql(
+    'ALTER TABLE appreciation_table ADD COLUMN deleted INTEGER DEFAULT 0',
+    [],
+    () => {},
+    () => {}
+  );
+});
+db.transaction(tx => {
+  tx.executeSql(
+    'ALTER TABLE task_table ADD COLUMN deleted INTEGER DEFAULT 0',
+    [],
+    () => {},
+    () => {}
+  );
+});
+
 function formatThanks(tx,mainId,newArray, prevArray){
   const tableName = 'appreciation_table';
   tx.executeSql(`CREATE TABLE IF NOT EXISTS appreciation_table (
@@ -14,12 +33,13 @@ function formatThanks(tx,mainId,newArray, prevArray){
     updateTime INTEGER,
     viewed_incompleted INTEGER DEFAULT 0,
     viewed_completed INTEGER DEFAULT 0,
+    deleted INTEGER DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
     )`,[],() => {
       //console.log('Appreciations Table created or already exists');
       newArray.filter(item => item.name != "").forEach(item => {
         tx.executeSql(
-          'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime) VALUES (?, ?, ?, ?, ?)',
+          'INSERT INTO appreciation_table (main_table_id, status, name, thanks, updateTime, deleted) VALUES (?, ?, ?, ?, ?, 0)',
           [mainId, item.status, item.name, item.thanks, item.updateTime],
           (tx, results) => {
             //console.log(`Added Thanks from ${item.name}`);
@@ -47,6 +67,7 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
     updateTime INTEGER,
     viewed_incompleted INTEGER DEFAULT 0,
     viewed_completed INTEGER DEFAULT 0,
+    deleted INTEGER DEFAULT 0,
     FOREIGN KEY (main_table_id) REFERENCES entries(id) ON DELETE CASCADE
     )`,[],() => {
       //console.log(`${tableName} Table created or already exists`);
@@ -54,7 +75,7 @@ function formatTasks(tx,mainId,newArray,prevArray,futureArray){
       newArray.filter(item => item.task != "").forEach(item => {
         //console.log(`Processing ${item}`);
         tx.executeSql(
-          `INSERT INTO ${tableName} (main_table_id, status, task, updateTime) VALUES (?, ?, ?, ?)`,
+          `INSERT INTO ${tableName} (main_table_id, status, task, updateTime, deleted) VALUES (?, ?, ?, ?, 0)`,
           [mainId, item.status, item.task, item.updateTime],
           (tx, results) => {
             //console.log(`Added Thanks from ${item.task}`);
@@ -108,7 +129,7 @@ function getPrevByStatus(tx, tableName, status, amount){
     const orderBy = status == `Completed` ? `viewed_completed` : `viewed_incompleted`
     const listpromise = new Promise((resolveQuery, rejectQuery) => {
       tx.executeSql(
-        `SELECT * FROM ${tableName} WHERE status = ? ORDER BY ${orderBy} LIMIT ?`,
+        `SELECT * FROM ${tableName} WHERE status = ? AND deleted = 0 ORDER BY ${orderBy} LIMIT ?`,
         [status, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -169,7 +190,7 @@ function getPrevByMainId(tableName, mainId){
   const listpromise = new Promise((resolveQuery, rejectQuery) => {
     db.transaction(tx => {
       tx.executeSql(
-        `SELECT * FROM ${tableName} WHERE main_table_id = ? ORDER BY updateTime DESC`,
+        `SELECT * FROM ${tableName} WHERE main_table_id = ? AND deleted = 0 ORDER BY updateTime DESC`,
         [mainId],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -255,7 +276,7 @@ function getList(type, tableName, input){
   return new Promise((resolve, reject) => {
     db.transaction( tx =>
       tx.executeSql(
-        `SELECT ${type} FROM ${tableName} WHERE ${type} LIKE ? COLLATE NOCASE ORDER BY id DESC LIMIT ?`,
+        `SELECT ${type} FROM ${tableName} WHERE ${type} LIKE ? AND deleted = 0 COLLATE NOCASE ORDER BY id DESC LIMIT ?`,
         [input, amount],
         (tx, results) => {
           if (results.rows.length > 0) {
@@ -513,4 +534,15 @@ function updateForm(entry){
   );
 }
 
-export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList, getListWithCount};
+function softDeleteItem(tableName, id){
+  db.transaction(tx => {
+    tx.executeSql(
+      `UPDATE ${tableName} SET deleted = 1 WHERE id = ?`,
+      [id],
+      () => {},
+      error => { console.log('Error deleting item', error); }
+    );
+  });
+}
+
+export {storeForm, updateForm, getThanks, getTasks, resetStorage, getPrevDays, getList, softDeleteItem, getListWithCount};

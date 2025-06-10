@@ -36,7 +36,9 @@ import {
         handleClear = {handleClear}
         handleRefresh = {handleRefresh}
         handleUpdate = {handleUpdate}
-        handleSettings = {handleSettings}/>}
+        handleSettings = {handleSettings}
+        closeMenu={() => setShowDropDown(false)}/>
+        }
       </View>
     );
   };

@@ -2,7 +2,7 @@
 import { View, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CheckBox, SubTitle, Title, XTextInput, XTextDisplay} from "./Form_Parts/FormParts_Index"
-import {softDeleteItem} from './Store_Form';
+import {softDeleteItem} from '../Storage_Components/Store_Form';
 
 const styles = StyleSheet.create({
   highlight: {

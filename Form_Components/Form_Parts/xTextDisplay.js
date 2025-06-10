@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'row',
     textAlignVertical: 'center',
-    padding: 10,
     fontFamily: 'courier',
     margin: 2,
   },

@@ -4,6 +4,7 @@ import { Alert} from 'react-native';
 const db = SQLite.openDatabase({ name: 'xDayEntries.db', location: 'default' });
 
 // Ensure older databases gain the soft-delete column without dropping data
+// Will Most Likely only need to run once
 db.transaction(tx => {
   tx.executeSql(
     'ALTER TABLE appreciation_table ADD COLUMN deleted INTEGER DEFAULT 0',

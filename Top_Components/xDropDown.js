@@ -6,7 +6,7 @@ import {
     TouchableOpacity
   } from 'react-native';
 
- const XDropDown = ({handleClear, handleRefresh, handleUpdate, closeMenu}) => {
+ const XDropDown = ({handleClear, handleRefresh, handleUpdate,handleSettings, closeMenu}) => {
     const wrapPress = (action) => () => {
       if (action) {
         action();
@@ -20,7 +20,7 @@ import {
         <XDropDownItem name = 'Update' onPress = {wrapPress(handleUpdate)}/>
         <XDropDownItem name = 'Clear' onPress = {wrapPress(handleClear)}/>
         <XDropDownItem name = 'Refresh' onPress = {wrapPress(handleRefresh)}/>
-        <XDropDownItem name = 'Settings'/>
+        <XDropDownItem name = 'Settings' onPress = {handleSettings}/>
       </View>
     );
   };

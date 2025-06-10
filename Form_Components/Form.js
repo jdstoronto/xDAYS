@@ -22,11 +22,11 @@ import {
   ExploreEquation
 } from './Form_Index';
 
-import { getFormated, setFormated} from './Format_Form';
+import { getFormated, setFormated} from '../Storage_Components/Format_Form';
 
-import {saveFile} from './Export_Form';
+import {saveFile} from '../Storage_Components/Export_Form';
 
-import {storeForm, updateForm, getThanks, getTasks} from './Store_Form';
+import {storeForm, updateForm, getThanks, getTasks} from '../Storage_Components/Store_Form';
 
 const importedPreviousTasks = [
   {

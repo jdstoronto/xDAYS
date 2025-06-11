@@ -1,8 +1,9 @@
 
-import { TextInput, View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {CheckBox, SubTitle, Title, XTextInput} from "./Form_Parts/FormParts_Index"
-import {getList} from "./Store_Form"
+import {CheckBox, SubTitle, Title, XTextInput, XTextDisplay} from "./Form_Parts/FormParts_Index"
+import {getList, softDeleteItem} from "../Storage_Components/Store_Form"
+
 
 const styles = StyleSheet.create({
   highlight: {
@@ -115,6 +116,11 @@ function ChecksThanks(props) {
     setShowPrevious(!showPrevious);
   };
 
+  const deleteThanks = (id) => {
+    softDeleteItem('appreciation_table', id);
+    props.updatePrevious(prev => prev.filter(item => item.id !== id));
+  };
+
   const createEmptyTasks = () =>{
     const tasks = []
     for (let i = 0; i < props.count; i++) {
@@ -169,12 +175,19 @@ function ChecksThanks(props) {
             status={value.status}
             onChange={() => handlePreviousCheckboxChange(index)}
       />
-      <Text style={styles.inputedname}>
-        {value.name}
-      </Text>
-      <Text style={styles.inputed}>
-        {value.thanks}
-      </Text>
+      <XTextDisplay
+        height={25}
+        width='30%'
+        text={value.name}
+        onDelete={() => deleteThanks(value.id)}
+      />
+      <XTextDisplay
+        height={25}
+        flex={1}
+        width='50%'
+        text={value.thanks}
+        onDelete={() => deleteThanks(value.id)}
+      />
     </View>
     )))}
   </View>

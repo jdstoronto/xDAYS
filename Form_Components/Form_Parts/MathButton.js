@@ -1,7 +1,7 @@
 import { TextInput, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, {useState} from 'react';
 import {XTextInput} from './FormParts_Index'
-import { getList } from '../Store_Form';
+import { getListWithCount } from '../../Storage_Components/Store_Form';
 
 const styles = StyleSheet.create({
     Container: {  // Fixed spelling from 'Containter' to 'Container'
@@ -43,8 +43,7 @@ const styles = StyleSheet.create({
     let prevList = [];
     //console.log(type)
     try {
-      prevList = await getList(type, `entries`, value+ '%');
-      updatedItems.names = prevList;
+      prevList = await getListWithCount(type, `entries`, value + '%');
       //setNames(nameList)
     } catch (error) {
       //console.log('failed to find other previous items with ' + value);

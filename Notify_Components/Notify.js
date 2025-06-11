@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { getTasks, getPrevDays } from '../Form_Components/Store_Form';
+import { getTasks, getPrevDays } from '../Storage_Components/Store_Form';
 
 import PushNotification from 'react-native-push-notification';
 import BackgroundTimer from 'react-native-background-timer';
@@ -77,7 +77,7 @@ function formatTasksNotification(tasks){
   return formattedString;
 }
 
-function NotifyDay({date, prevDays, setPrevDays}){
+function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
   const [tasks, setTasks] = useState([])
 
   const hasScheduledTasks = useRef(false);
@@ -110,7 +110,7 @@ function NotifyDay({date, prevDays, setPrevDays}){
   
 
   useEffect(() => {
-    const [hours, min] = [12,30];
+    const {hour: hours, minute: min} = taskTime;
     
     
     const timeUntil2_30PM  = calculateTimeUntilTarget(hours, min);
@@ -125,14 +125,14 @@ function NotifyDay({date, prevDays, setPrevDays}){
 
       hasScheduledTasks.current = true;
     }
-  },[tasks])
+  },[tasks, taskTime])
 
   useEffect(()=>{
     if (prevDays.length != 0 && !hasScheduledPrevDay.current){
-      const [hours, min] = [21, 48];
+      
+      const {hour: hours, minute: min} = nightTime;
 
-      const nightTimer = calculateCountdownUntilTarget(hours, min);
-      const nightTime = calculateTimeUntilTarget(hours, min);
+      const nightTimer = calculateTimeUntilTarget(hours, min);
 
       prevDay = prevDays[0];
 
@@ -140,11 +140,11 @@ function NotifyDay({date, prevDays, setPrevDays}){
 
       const nightNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
 
-      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTime);
+      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTimer);
       hasScheduledPrevDay.current = true;
     }
 
-  },[prevDays])
+  },[prevDays, nightTime])
 
   return null;
 }

@@ -15,6 +15,7 @@ import {
   StyleSheet,
   useColorScheme,
   View,
+  Modal,
 } from 'react-native';
 
 import {
@@ -24,6 +25,7 @@ import {
 import XHeader from './Top_Components/xHeader';
 import XForm from './Form_Components/Form';
 import NotifyDay from './Notify_Components/Notify';
+import SettingsPage from './Settings_Components/SettingsPage';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -72,6 +74,9 @@ function App(): React.JSX.Element {
   const [refresh, setRefresh] = useState(false);
   const [update, setUpdate] = useState(false);
   const [clear, setClear] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [taskTime, setTaskTime] = useState({hour: 12, minute: 30});
+  const [nightTime, setNightTime] = useState({hour: 21, minute: 30});
 
   const handleRefresh = () => {
     setRefresh(true);  // Trigger refresh
@@ -93,6 +98,14 @@ function App(): React.JSX.Element {
     setClear(true);  // Trigger Clear
   };
 
+  const handleSettings = () => {
+    setShowSettings(true);
+  };
+
+  const closeSettings = () => {
+    setShowSettings(false);
+  };
+
   const resetClear = () => {
     setClear(false);  // Trigger Clear
   };
@@ -102,10 +115,22 @@ function App(): React.JSX.Element {
   };
 
   return (
+    <>
+    <Modal visible={showSettings} animationType="slide">
+      <SettingsPage
+        onClose={closeSettings}
+        taskTime={taskTime}
+        nightTime={nightTime}
+        onUpdateTaskTime={setTaskTime}
+        onUpdateNightTime={setNightTime}
+      />
+    </Modal>
     <SafeAreaView style={backgroundStyle}>
-      <NotifyDay 
+      <NotifyDay
         prevDays={previousDays}
         setPrevDays={setPreviousDays}
+        taskTime={taskTime}
+        nightTime={nightTime}
         date = {currentDate} />
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
@@ -114,10 +139,11 @@ function App(): React.JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <XHeader date = {currentDate} 
+        <XHeader date = {currentDate}
         handleClear = {handleClear}
         handleRefresh = {handleRefresh}
-        handleUpdate = {handleUpdate}/>
+        handleUpdate = {handleUpdate}
+        handleSettings = {handleSettings}/>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -130,6 +156,7 @@ function App(): React.JSX.Element {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 }
 

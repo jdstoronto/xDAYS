@@ -134,7 +134,7 @@ function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
 
       const nightTimer = calculateTimeUntilTarget(hours, min);
 
-      prevDay = prevDays[0];
+      const prevDay = prevDays[0];
 
       console.log(`DEBUG: Have Previous ${prevDay.prevDayCount} days ago Sent Background Scheduled Notification for ${nightTimer}`)
 

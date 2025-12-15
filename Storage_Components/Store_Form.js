@@ -539,7 +539,9 @@ function softDeleteItem(tableName, id){
     tx.executeSql(
       `UPDATE ${tableName} SET deleted = 1 WHERE id = ?`,
       [id],
-      () => {},
+      () => {
+        console.log('Deleted '+ id)
+      },
       error => { console.log('Error deleting item', error); }
     );
   });

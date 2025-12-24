@@ -37,83 +37,72 @@ const styles = StyleSheet.create({
   },
 });
 
-function checkboxChange(previous, index){
-  const updatedItems = previous;
-  // Update the specific item at the given index
-  if (updatedItems[index].status == '' && updatedItems[index].status != 'Future'){
-    updatedItems[index].status = 'Completed';}
-  else if(updatedItems[index].status != 'Future'){
-    updatedItems[index].status = '';
-  }
-  updatedItems[index].updateTime = Date.now();
-  return updatedItems;
+const generateUniqueId = () => `${Date.now().toString()}-${Math.random().toString(16).slice(2)}`;
+
+function checkboxChange(previous, id){
+  const timestamp = Date.now();
+  return previous.map(item => {
+    if(item.id !== id){
+      return item;
+    }
+    if (item.status !== 'Future'){
+      const newStatus = item.status === '' ? 'Completed' : '';
+      return {...item, status: newStatus, updateTime: timestamp};
+    }
+    return {...item, updateTime: timestamp};
+  });
 }
 
-function futureCheckChange(previous, index){
-  const updatedItems = previous;
-  // Update the specific item at the given index
-  if (updatedItems[index].status == 'Future'){
-    updatedItems[index].status = '';}
-  else{
-    updatedItems[index].status = 'Future';
-  }
-  updatedItems[index].updateTime = Date.now();
-  return updatedItems;  // Return the updated array
+function futureCheckChange(previous, id){
+  const timestamp = Date.now();
+  return previous.map(item => item.id === id ? {...item, status: item.status === 'Future' ? '' : 'Future', updateTime: timestamp} : item);
 }
 
-function propertyChange(previous, index, name, value){
-  const updatedItems = previous;
-  updatedItems[index][name] = value;
-  updatedItems[index].updateTime = Date.now();
-  return updatedItems;  // Return the updated array
+function propertyChange(previous, id, name, value){
+  return previous.map(item => item.id === id ? {...item, [name]: value, updateTime: Date.now()} : item);
 }
 
-async function listChange(previous, index, name, value){
+async function listChange(previous, id, name, value){
   let nameList = [];
-  const updatedItems = previous;
-  updatedItems[index][name] = value;
-  updatedItems[index].updateTime = Date.now();
   try {
     nameList = await getList(`name`, `appreciation_table`, value+ '%');
-    updatedItems[index].names = nameList;
-    //setNames(nameList)
   } catch (error) {
     console.log('failed to find other names with ' + value)
   }
-  return updatedItems;
+  return previous.map(item => item.id === id ? {...item, [name]: value, names: nameList, updateTime: Date.now()} : item);
 }
 
 function ChecksThanks(props) {
 
   const [showPrevious, setShowPrevious] = useState(false);
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (id) => {
     props.setValue((prevItems) => {
-      return checkboxChange([...prevItems], index);  // Return the updated array
+      return checkboxChange([...prevItems], id);  // Return the updated array
     });
   };
 
-  const handlePreviousCheckboxChange = (index) => {
+  const handlePreviousCheckboxChange = (id) => {
     props.updatePrevious((prevItems) => {
-      return checkboxChange([...prevItems], index);  // Return the updated array
+      return checkboxChange([...prevItems], id);  // Return the updated array
     });
   };
 
-  const handlePropertyChange = async (index, name, value) => {
+  const handlePropertyChange = async (id, name, value) => {
     if(name == `name` && value != null){
-      const updatedItems = await listChange([...props.value], index, name, value);
+      const updatedItems = await listChange([...props.value], id, name, value);
       props.setValue(updatedItems);
       return;
     }
     else{
     props.setValue((prevItems) => {
-      return propertyChange([...prevItems], index, name, value);  // Return the updated array
+      return propertyChange([...prevItems], id, name, value);  // Return the updated array
     });
     }
   };
 
   const handleShowPrevious = () => {
-    setShowPrevious(!showPrevious);
+    setShowPrevious(prev => !prev);
   };
 
   const deleteThanks = (id) => {
@@ -125,10 +114,12 @@ function ChecksThanks(props) {
     const tasks = []
     for (let i = 0; i < props.count; i++) {
       const element = {
+        id: generateUniqueId(),
         status:'',
         thanks:'',
         name:'',
         names:[],
+        updateTime: Date.now(),
       };
       tasks.push(element)
     }
@@ -144,17 +135,17 @@ function ChecksThanks(props) {
   return(
   <View>
   <Title title = {props.title} />
-  {Array.from(props.value).map((value, index) => (
-    <View style ={styles.checkrow} key={index}>
+  {Array.from(props.value).map((value) => (
+    <View style ={styles.checkrow} key={value.id}>
       <CheckBox
             status={value.status}
-            onChange={() => handleCheckboxChange(index)}
+            onChange={() => handleCheckboxChange(value.id)}
       />
       <XTextInput
           height = {40}
           width = '30%'
           description={value.name}
-          setDescription={text => handlePropertyChange(index,'name',text)}
+          setDescription={text => handlePropertyChange(value.id,'name',text)}
           placeholder = {`Name`}
           itemList = {value.names}
           />
@@ -163,17 +154,17 @@ function ChecksThanks(props) {
           width = '50%'
           flex = {1}
           description={value.thanks}
-          setDescription={text => handlePropertyChange(index,'thanks',text)}
+          setDescription={text => handlePropertyChange(value.id,'thanks',text)}
           placeholder = {`Thank You..`}
           />
     </View>
     ))}
   <SubTitle title='Previous' onClick = {handleShowPrevious}/>
-  {showPrevious && (Array.from(props.previousThanks).map((value, index) => (
-    <View style ={styles.checkrow} key={index}>
+  {showPrevious && (Array.from(props.previousThanks).map((value) => (
+    <View style ={styles.checkrow} key={value.id}>
       <CheckBox
             status={value.status}
-            onChange={() => handlePreviousCheckboxChange(index)}
+            onChange={() => handlePreviousCheckboxChange(value.id)}
       />
       <XTextDisplay
         height={25}

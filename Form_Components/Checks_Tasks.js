@@ -28,75 +28,72 @@ const styles = StyleSheet.create({
   },
 });
 
-function checkboxChange(previous, index){
-  const updatedItems = previous;
-      // Update the specific item at the given index
-      if (updatedItems[index].status == '' && updatedItems[index].status != 'Future'){
-        updatedItems[index].status = 'Completed';}
-      else if(updatedItems[index].status != 'Future'){
-        updatedItems[index].status = '';
-      }
-      updatedItems[index].updateTime = Date.now();
-      return updatedItems;
+const generateUniqueId = () => `${Date.now().toString()}-${Math.random().toString(16).slice(2)}`;
+
+function checkboxChange(previous, id){
+  const timestamp = Date.now();
+  return previous.map(item => {
+    if(item.id !== id){
+      return item;
+    }
+    if (item.status !== 'Future'){
+      const newStatus = item.status == '' ? 'Completed' : '';
+      return {...item, status: newStatus, updateTime: timestamp};
+    }
+    return {...item, updateTime: timestamp};
+  });
 }
 
-function futureCheckChange(previous, index){
-  const updatedItems = previous;
-  // Update the specific item at the given index
-  if (updatedItems[index].status == 'Future'){
-    updatedItems[index].status = '';}
-  else{
-    updatedItems[index].status = 'Future';
-  }
-  updatedItems[index].updateTime = Date.now();
-  return updatedItems;  // Return the updated array
+function futureCheckChange(previous, id){
+  const timestamp = Date.now();
+  return previous.map(item => item.id === id ? {...item, status: item.status === 'Future' ? '' : 'Future', updateTime: timestamp} : item);
 }
 
 function ChecksTasks(props) {
 
   const [showPrevious, setShowPrevious] = useState(false);
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (id) => {
     props.setValue((prevItems) => {
-      return checkboxChange([...prevItems], index);  // Return the updated array
+      return checkboxChange([...prevItems], id);  // Return the updated array
     });
   };
 
-  const handlePreviousCheckboxChange = (index) => {
+  const handlePreviousCheckboxChange = (id) => {
     props.updatePrevious((prevItems) => {
-      return checkboxChange([...prevItems], index);  // Return the updated array
+      return checkboxChange([...prevItems], id);  // Return the updated array
     });
   };
 
-  const handleFutureCheckboxChange = (index) => {
+  const handleFutureCheckboxChange = (id) => {
     props.updateFuture((prevItems) => {
-      return checkboxChange([...prevItems], index);  // Return the updated array
+      return checkboxChange([...prevItems], id);  // Return the updated array
     });
   };
 
-  const handleFuture = (index) =>{ 
+  const handleFuture = (id) =>{
     props.setValue((prevItems) => {
-      return futureCheckChange([...prevItems], index);  // Return the updated array
+      return futureCheckChange([...prevItems], id);  // Return the updated array
     });
 
   }
 
-  const handlePreviousFuture = (index) =>{ 
+  const handlePreviousFuture = (id) =>{
     props.updatePrevious((prevItems) => {
-      return futureCheckChange([...prevItems], index);  // Return the updated array
+      return futureCheckChange([...prevItems], id);  // Return the updated array
     });
 
   }
 
-  const changeFuture = (index) =>{ 
+  const changeFuture = (id) =>{
     props.updateFuture((prevItems) => {
-      return futureCheckChange([...prevItems], index);  // Return the updated array
+      return futureCheckChange([...prevItems], id);  // Return the updated array
     });
 
   }
 
-  const handleShowPrevious = (index) => {
-    setShowPrevious(!showPrevious);
+  const handleShowPrevious = () => {
+    setShowPrevious(prev => !prev);
   };
 
   const deleteTask = (id) => {
@@ -105,14 +102,9 @@ function ChecksTasks(props) {
     props.updateFuture(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleTask = (newValue, index) =>{
+  const handleTask = (newValue, id) =>{
     props.setValue((prevItems) => {
-      // Create a copy of the array
-      const updatedItems = [...prevItems];
-      // Update the specific item at the given index
-      updatedItems[index].task = newValue;
-      updatedItems[index].id = Date.now();
-      return updatedItems;  // Return the updated array
+      return prevItems.map(item => item.id === id ? {...item, task: newValue, updateTime: Date.now()} : item);
     });
   }
 
@@ -120,6 +112,7 @@ function ChecksTasks(props) {
     const tasks = []
     for (let i = 0; i < props.count; i++) {
       const element = {
+        id: generateUniqueId(),
         status:'',
         task:'',
         updateTime: Date.now(),
@@ -139,30 +132,30 @@ function ChecksTasks(props) {
   return(
   <View>
   <Title title = {props.title} />
-  {Array.from(props.value).map((value, index) => (
-    <View style ={styles.checkrow} key={index}>
+  {Array.from(props.value).map((value) => (
+    <View style ={styles.checkrow} key={value.id}>
       <CheckBox
             status={value.status}
-            onChange={() =>handleCheckboxChange(index)}
-            onHold={() => handleFuture(index)}
+            onChange={() =>handleCheckboxChange(value.id)}
+            onHold={() => handleFuture(value.id)}
       />
       <XTextInput
           height = {40}
           flex = {1}
           description={value.task}// Use the setter function passed as a prop
-          setDescription={text => handleTask(text, index)}
+          setDescription={text => handleTask(text, value.id)}
           placeholder = {`Task`}
           />
     </View>
     ))}
   <SubTitle title='Previous' onClick = {handleShowPrevious}/>
-  
-  {showPrevious && (Array.from(props.previousTasks).map((value, index) => (
-    <View style ={styles.checkrow}  key={index}>
+
+  {showPrevious && (Array.from(props.previousTasks).map((value) => (
+    <View style ={styles.checkrow}  key={value.id}>
     <CheckBox
           status={value.status}
-          onChange={() =>handlePreviousCheckboxChange(index)}
-          onHold={() => handlePreviousFuture(index)}
+          onChange={() =>handlePreviousCheckboxChange(value.id)}
+          onHold={() => handlePreviousFuture(value.id)}
     />
     <XTextDisplay
         height={25}
@@ -174,12 +167,12 @@ function ChecksTasks(props) {
     )))}
   <SubTitle title='Future' onClick = {handleShowPrevious}/>
 
-  {showPrevious && (Array.from(props.futureTasks).map((value, index) => (
-    <View style ={styles.checkrow}  key={index}>
+  {showPrevious && (Array.from(props.futureTasks).map((value) => (
+    <View style ={styles.checkrow}  key={value.id}>
     <CheckBox
           status={value.status}
-          onChange={() =>handleFutureCheckboxChange(index)}
-          onHold={() => changeFuture(index)}
+          onChange={() =>handleFutureCheckboxChange(value.id)}
+          onHold={() => changeFuture(value.id)}
     />
     <XTextDisplay
         height={25}

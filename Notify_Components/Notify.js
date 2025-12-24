@@ -6,9 +6,9 @@ import PushNotification from 'react-native-push-notification';
 import BackgroundTimer from 'react-native-background-timer';
 
 
-const sendTimedNotification = (title, message, time) => {
+const sendTimedNotification = (id, title, message, time) => {
   PushNotification.localNotificationSchedule({
-    id: '001',
+    id,
     channelId: "xdays-channel",  // The channel ID
     title: title,
     message: message,
@@ -117,7 +117,7 @@ function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
     //console.log(`Found the following length ${tasks.length}`);
     if (tasks.length != 0 && !hasScheduledTasks.current) {
       const dayTaskNotification = formatTasksNotification(tasks);
-      sendTimedNotification('xDAYS - Day Tasks Reminder', dayTaskNotification, timeUntil2_30PM );
+      sendTimedNotification('day-tasks', 'xDAYS - Day Tasks Reminder', dayTaskNotification, timeUntil2_30PM );
     
       const taskTimer = calculateCountdownUntilTarget(hours, min);
       
@@ -140,7 +140,7 @@ function NotifyDay({date, prevDays, setPrevDays, taskTime, nightTime}){
 
       const nightNotification = `Time to journal ${prevDay.prevDayCount>1 && `its been ${prevDay.prevDayCount} days`}`
 
-      sendTimedNotification('xDAYS - Journal Reminder', nightNotification, nightTimer);
+      sendTimedNotification('night-journal', 'xDAYS - Journal Reminder', nightNotification, nightTimer);
       hasScheduledPrevDay.current = true;
     }
 
